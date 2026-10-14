@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tecniair — demo web
 
-## Getting Started
+Sitio de ventas para Tecniair (aires acondicionados, Armenia, Quindío). El contenido salió del Instagram @tecniair. Cada botón abre WhatsApp con un mensaje ya escrito.
 
-First, run the development server:
+## Correr el proyecto
 
 ```bash
-npm run dev
-# or
+yarn install
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Next.js 16, Tailwind CSS 4, GSAP + ScrollTrigger para las animaciones, Lenis para el scroll suave y la fuente Archivo variable (self-hosted con Fontsource).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Secciones
 
-## Learn More
+| Componente | Qué hace |
+| --- | --- |
+| `Preloader` | Intro: la temperatura baja de 31° a 18° y se levanta la cortina |
+| `Hero` | Foto + aire frío animado en canvas (`ColdAirCanvas`) + control remoto interactivo |
+| `ThermostatStory` | Sección fija con scroll: de 31° con calor y distorsión a 18° frío |
+| `ServicesShowcase` | Servicios en scroll horizontal (desktop) con foto y CTA a WhatsApp |
+| `MarqueeBand` | Nombres de servicios gigantes que aceleran con el scroll |
+| `SymptomPicker` | Diagnóstico: arma el mensaje de WhatsApp según la falla |
+| `BtuCalculator` | Calculadora de BTU con medidor y cotización por WhatsApp |
+| `HowWeWork` | Ficha técnica metálica + proceso con la tubería de cobre que se llena |
+| `Coverage` | Hogares, negocios y edificios |
+| `Faq`, `SiteFooter`, `WhatsAppDock` | Preguntas, cierre y botones fijos de WhatsApp |
 
-To learn more about Next.js, take a look at the following resources:
+Datos del negocio: `src/lib/business.ts`. Fotos: `src/lib/images.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pendiente con el cliente
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ ] Logo en vector (el actual es una recreación en SVG en `Logo.tsx`)
+- [ ] Fotos propias: hoy son fotos de Unsplash (licencia libre). Se reemplazan en `src/lib/images.ts`
+- [ ] Confirmar la cobertura (`business.coverage`)
+- [ ] Confirmar "atención 24 horas" y "garantía por escrito" antes de publicar
