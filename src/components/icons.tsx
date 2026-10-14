@@ -51,3 +51,35 @@ export function PlayIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function SnowflakeIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true" {...props}>
+      <path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9 4l3 2 3-2M9 20l3-2 3 2M4 10.5l3.5-.5-.9-3.4M20 13.5l-3.5.5.9 3.4M4 13.5l3.5.5-.9 3.4M20 10.5l-3.5-.5.9-3.4" />
+    </svg>
+  );
+}
+
+export function FanIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M12 10.2a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6Zm.6-1.6c.4-2.6 1.3-6 4.3-6 2 0 3 1.6 2.6 3.3-.5 2.1-3.4 3.2-6.9 2.7Zm2.8 3.9c2.5.9 5.6 2.6 4.9 5.5-.5 1.9-2.3 2.6-3.8 1.7-1.9-1.1-2-4.2-1.1-7.2Zm-4 3.3c-1.9 1.8-4.8 3.8-7.1 1.7-1.5-1.3-1.3-3.2.1-4.2 1.7-1.3 4.6-.4 7 2.5Z" />
+    </svg>
+  );
+}
+
+export function PowerIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" {...props}>
+      <path d="M12 3v8M6.3 6.8a8 8 0 1 0 11.4 0" />
+    </svg>
+  );
+}
+
+export function ArrowDownIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 5v14M6 13l6 6 6-6" />
+    </svg>
+  );
+}
