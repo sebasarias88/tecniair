@@ -89,7 +89,7 @@ export function ServicesShowcase() {
     <section
       ref={ref}
       id="servicios"
-      className="relative overflow-hidden bg-abyss py-24 lg:flex lg:h-svh lg:items-center lg:py-0"
+      className="relative overflow-hidden bg-abyss py-24 lg:flex lg:h-svh lg:items-center lg:pb-6 lg:pt-[6.75rem]"
     >
       <div
         ref={trackRef}
@@ -113,7 +113,7 @@ export function ServicesShowcase() {
         {featured.map((service) => (
           <article
             key={service.slug}
-            className="service-panel relative flex min-h-[34rem] shrink-0 overflow-hidden rounded-[2rem] ring-1 ring-white/10 lg:h-[78svh] lg:min-h-0 lg:w-[min(64vw,980px)]"
+            className="service-panel relative flex min-h-[32rem] shrink-0 overflow-hidden rounded-[2rem] ring-1 ring-white/10 lg:h-[min(46rem,calc(100svh-8.5rem))] lg:min-h-0 lg:w-[min(62vw,940px)]"
           >
             <div className="absolute inset-0 overflow-hidden">
               <div className="service-image absolute inset-y-0 -left-[10%] w-[120%]">
@@ -131,41 +131,41 @@ export function ServicesShowcase() {
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(0deg, rgb(5 14 26 / 0.97) 0%, rgb(5 14 26 / 0.75) 40%, rgb(5 14 26 / 0.1) 75%), linear-gradient(90deg, rgb(5 14 26 / 0.55), transparent 60%)",
+                  "linear-gradient(0deg, rgb(5 14 26 / 0.98) 0%, rgb(5 14 26 / 0.85) 45%, rgb(5 14 26 / 0.15) 80%), linear-gradient(90deg, rgb(5 14 26 / 0.5), transparent 60%)",
               }}
             />
-            <div className="relative mt-auto grid w-full gap-6 p-6 sm:p-10 lg:grid-cols-2 lg:items-end">
-              <div>
-                <h3 className="type-display text-[clamp(2.4rem,4.6vw,4.4rem)]">{service.shortName}</h3>
-                <p className="mt-4 max-w-[40ch] text-white/75">{service.intro}</p>
-              </div>
-              <div>
-                <ul className="space-y-2.5">
+            <div className="relative mt-auto w-full p-6 sm:p-9 lg:p-10">
+              <h3 className="type-display text-[clamp(1.8rem,8.4vw,2.8rem)] lg:text-[clamp(2.2rem,3.6vw,3.8rem)]">{service.shortName}</h3>
+              <div className="mt-5 grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-10">
+                <div>
+                  <p className="max-w-[42ch] text-white/80">{service.intro}</p>
+                  <div className="mt-6 flex flex-wrap items-center gap-2">
+                    <a
+                      href={whatsappUrl(service.message)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-abyss transition-colors hover:bg-glacier"
+                    >
+                      <WhatsAppIcon className="size-5" />
+                      {service.cta}
+                    </a>
+                    <Link
+                      href={`/servicios/${service.slug}`}
+                      className="inline-flex items-center rounded-full border border-white/25 px-5 py-3.5 font-semibold transition-colors hover:border-white/60"
+                    >
+                      Ver detalles
+                      <span className="sr-only"> de {service.name}</span>
+                    </Link>
+                  </div>
+                </div>
+                <ul className="hidden space-y-2 border-l border-white/10 pl-8 xl:block">
                   {service.includes.slice(0, 4).map((item) => (
-                    <li key={item} className="flex items-baseline gap-3 text-white/85">
-                      <span aria-hidden="true" className="h-px w-5 shrink-0 translate-y-[-0.3em] bg-glacier" />
+                    <li key={item} className="flex items-baseline gap-3 text-[0.98rem] text-white/85">
+                      <span aria-hidden="true" className="h-px w-4 shrink-0 translate-y-[-0.3em] bg-glacier" />
                       {item}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-7 flex flex-wrap items-center gap-2">
-                  <a
-                    href={whatsappUrl(service.message)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-abyss transition-colors hover:bg-glacier"
-                  >
-                    <WhatsAppIcon className="size-5" />
-                    {service.cta}
-                  </a>
-                  <Link
-                    href={`/servicios/${service.slug}`}
-                    className="inline-flex items-center rounded-full border border-white/25 px-5 py-3.5 font-semibold transition-colors hover:border-white/60"
-                  >
-                    Ver detalles
-                    <span className="sr-only"> de {service.name}</span>
-                  </Link>
-                </div>
               </div>
             </div>
           </article>
