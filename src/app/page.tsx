@@ -4,7 +4,6 @@ import { Faq } from "@/components/Faq";
 import { Hero } from "@/components/Hero";
 import { HowWeWork } from "@/components/HowWeWork";
 import { JsonLd } from "@/components/JsonLd";
-import { MarqueeBand } from "@/components/MarqueeBand";
 import { MoreServices } from "@/components/MoreServices";
 import { SectorsExplorer } from "@/components/SectorsExplorer";
 import { ServicesShowcase } from "@/components/ServicesShowcase";
@@ -20,7 +19,6 @@ export default function HomePage() {
       <ThermostatStory />
       <ServicesShowcase />
       <MoreServices />
-      <MarqueeBand />
       <SectorsExplorer />
       <BusinessPlans />
       <SymptomPicker />

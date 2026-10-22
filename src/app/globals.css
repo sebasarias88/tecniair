@@ -147,25 +147,6 @@ details > summary::-webkit-details-marker {
   display: none;
 }
 
-@keyframes preloader-failsafe {
-  to {
-    visibility: hidden;
-    pointer-events: none;
-  }
-}
-
-@keyframes ticker {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes pulse-dot {
   0%,
   100% {
@@ -173,12 +154,6 @@ details > summary::-webkit-details-marker {
   }
   50% {
     box-shadow: 0 0 0 8px rgb(127 227 255 / 0);
-  }
-}
-
-@keyframes flow {
-  to {
-    stroke-dashoffset: -40;
   }
 }
 

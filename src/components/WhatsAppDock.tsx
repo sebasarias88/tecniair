@@ -23,8 +23,10 @@ export function WhatsAppDock() {
 
   return (
     <>
-      {/* Mobile: persistent bottom bar */}
-      <div className="glass fixed inset-x-0 bottom-0 z-50 rounded-t-3xl px-3 pb-[max(0.7rem,env(safe-area-inset-bottom))] pt-3 md:hidden">
+      {/* Mobile: bottom bar once the hero buttons are behind */}
+      <div className={`glass fixed inset-x-0 bottom-0 z-50 rounded-t-3xl px-3 pb-[max(0.7rem,env(safe-area-inset-bottom))] pt-3 transition-transform duration-500 md:hidden ${
+          visible ? "translate-y-0" : "pointer-events-none translate-y-full"
+        }`}>
         <div className="grid grid-cols-[1fr_auto] gap-2">
           <a
             href={whatsappUrl(defaultWhatsappMessage)}
