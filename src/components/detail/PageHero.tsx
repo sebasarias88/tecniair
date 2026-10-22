@@ -17,7 +17,7 @@ type PageHeroProps = {
 
 export function PageHero({ crumbs, title, headline, intro, image, ctaLabel, message }: PageHeroProps) {
   return (
-    <section className="relative isolate flex min-h-[88svh] flex-col justify-end overflow-hidden">
+    <section className="relative isolate flex min-h-svh flex-col justify-end overflow-hidden">
       <div className="absolute inset-0 -z-20">
         <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
       </div>
@@ -29,7 +29,7 @@ export function PageHero({ crumbs, title, headline, intro, image, ctaLabel, mess
             "linear-gradient(90deg, rgb(5 14 26 / 0.95) 0%, rgb(5 14 26 / 0.7) 55%, rgb(5 14 26 / 0.3) 100%), linear-gradient(0deg, #050e1a 0%, transparent 45%)",
         }}
       />
-      <div className="mx-auto w-full max-w-7xl px-4 pb-14 pt-36 sm:px-8 lg:pb-20">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-[clamp(1.5rem,6svh,4.5rem)] pt-28 sm:px-8">
         <nav aria-label="Ruta de navegación">
           <ol className="flex flex-wrap items-center gap-2 text-[0.92rem] text-white/70">
             {crumbs.map((crumb, i) => (
@@ -48,10 +48,10 @@ export function PageHero({ crumbs, title, headline, intro, image, ctaLabel, mess
             ))}
           </ol>
         </nav>
-        <h1 className="mt-6 max-w-[40ch] text-[clamp(1.1rem,1.8vw,1.4rem)] font-semibold text-glacier">{title}</h1>
-        <p className="type-display mt-4 max-w-[16ch] text-[clamp(2.8rem,7vw,6.4rem)]">{headline}</p>
-        <p className="mt-6 max-w-[54ch] text-[1.1rem] text-white/80 sm:text-[1.2rem]">{intro}</p>
-        <div className="mt-9 flex flex-wrap gap-3">
+        <h1 className="mt-[clamp(0.75rem,2.5svh,1.5rem)] max-w-[40ch] text-[clamp(1.1rem,1.8vw,1.4rem)] font-semibold text-glacier">{title}</h1>
+        <p className="type-display mt-[clamp(0.5rem,1.5svh,1rem)] max-w-[17ch] text-[clamp(2.4rem,min(6.6vw,9.5svh),6rem)]">{headline}</p>
+        <p className="mt-[clamp(0.75rem,2.5svh,1.5rem)] max-w-[54ch] text-[clamp(1rem,1.3vw,1.2rem)] text-white/80">{intro}</p>
+        <div className="mt-[clamp(1rem,3.5svh,2.25rem)] flex flex-wrap gap-3">
           <a
             href={whatsappUrl(message)}
             target="_blank"

@@ -75,10 +75,11 @@ export function ThermostatStory() {
         .to(".story-cold", { autoAlpha: 1, duration: 2.4 }, 0.6)
         .to(".story-gauge-fill", { scaleY: 0, duration: 3, ease: "power1.inOut" }, 0)
         .to(".story-media", { scale: 1.12, duration: 3 }, 0)
-        .to(".story-beat-0", { autoAlpha: 0, y: -40, duration: 0.4 }, 0.8)
-        .to(".story-beat-1", { autoAlpha: 1, y: 0, duration: 0.4 }, 1.0)
-        .to(".story-beat-1", { autoAlpha: 0, y: -40, duration: 0.4 }, 1.9)
-        .to(".story-beat-2", { autoAlpha: 1, y: 0, duration: 0.4 }, 2.1);
+        // Each line fully leaves before the next one enters, so they never overlap.
+        .to(".story-beat-0", { autoAlpha: 0, y: -30, duration: 0.3 }, 0.75)
+        .to(".story-beat-1", { autoAlpha: 1, y: 0, duration: 0.3 }, 1.1)
+        .to(".story-beat-1", { autoAlpha: 0, y: -30, duration: 0.3 }, 1.85)
+        .to(".story-beat-2", { autoAlpha: 1, y: 0, duration: 0.3 }, 2.2);
     },
     { scope: ref },
   );

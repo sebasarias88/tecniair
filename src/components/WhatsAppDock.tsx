@@ -47,21 +47,22 @@ export function WhatsAppDock() {
         </div>
       </div>
 
-      {/* Desktop: floating button once the hero is behind */}
+      {/* Desktop: a compact round button that stays out of the content's way */}
       <a
         href={whatsappUrl(defaultWhatsappMessage)}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="Agendar visita por WhatsApp"
         aria-hidden={!visible}
         tabIndex={visible ? 0 : -1}
-        className={`glass fixed bottom-7 right-7 z-50 hidden items-center gap-3 rounded-full py-2.5 pl-2.5 pr-6 font-semibold transition-all duration-500 hover:border-glacier/60 md:inline-flex ${
+        className={`btn-ice group fixed bottom-6 right-6 z-50 hidden size-14 place-items-center rounded-full transition-all duration-500 md:grid ${
           visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
         }`}
       >
-        <span className="btn-ice grid size-11 place-items-center rounded-full">
-          <WhatsAppIcon className="size-5" />
+        <WhatsAppIcon className="size-7" />
+        <span className="pointer-events-none absolute right-[calc(100%+0.75rem)] whitespace-nowrap rounded-full bg-navy px-4 py-2 text-[0.92rem] font-semibold text-white opacity-0 shadow-lg ring-1 ring-white/10 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          Agendar visita
         </span>
-        Agendar visita
       </a>
     </>
   );
