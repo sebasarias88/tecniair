@@ -116,46 +116,41 @@ export function Hero() {
   const intensityRef = useRef<number>((MAX_TEMP - 18) / (MAX_TEMP - MIN_TEMP));
 
   useGSAP(
-    (_, contextSafe) => {
-      if (prefersReducedMotion() || !contextSafe) return;
-
+    () => {
+      if (prefersReducedMotion()) return;
       const root = ref.current;
       if (!root) return;
-      const media = root.querySelectorAll(".hero-media");
-      const lines = root.querySelectorAll(".hero-line > span");
-      const fades = root.querySelectorAll(".hero-fade");
-      const widget = root.querySelectorAll(".hero-widget");
 
-      gsap.set([fades, widget], { autoAlpha: 0, y: 30 });
-      gsap.set(lines, { yPercent: 110 });
-      gsap.set(media, { scale: 1.25 });
-
-      const play = contextSafe(() => {
-        const tl = gsap.timeline();
-        tl.to(media, { scale: 1.08, duration: 2.2, ease: "expo.out" })
-          .to(lines, { yPercent: 0, duration: 1.2, ease: "expo.out", stagger: 0.1 }, 0.1)
-          .to(fades, { autoAlpha: 1, y: 0, duration: 1, ease: "expo.out", stagger: 0.08 }, 0.45)
-          .to(widget, { autoAlpha: 1, y: 0, duration: 1.2, ease: "expo.out" }, 0.6);
+      // The headline is never hidden, so the largest paint happens right away.
+      gsap.from(root.querySelectorAll(".hero-media"), { scale: 1.18, duration: 1.8, ease: "expo.out" });
+      gsap.from(root.querySelectorAll(".hero-fade"), {
+        autoAlpha: 0,
+        y: 24,
+        duration: 0.9,
+        ease: "expo.out",
+        stagger: 0.07,
+        delay: 0.1,
       });
-
-      const w = window as Window & { __tecniairIntroDone?: boolean };
-      if (w.__tecniairIntroDone) play();
-      else window.addEventListener("tecniair:intro-done", play, { once: true });
+      gsap.from(root.querySelectorAll(".hero-widget"), {
+        autoAlpha: 0,
+        y: 30,
+        duration: 1.1,
+        ease: "expo.out",
+        delay: 0.35,
+      });
 
       // Parallax as the hero leaves
-      gsap.to(".hero-media", {
+      gsap.to(root.querySelectorAll(".hero-media"), {
         yPercent: 18,
         ease: "none",
-        scrollTrigger: { trigger: ref.current, start: "top top", end: "bottom top", scrub: true },
+        scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: true },
       });
-      gsap.to(".hero-content", {
+      gsap.to(root.querySelectorAll(".hero-content"), {
         yPercent: -12,
         autoAlpha: 0.2,
         ease: "none",
-        scrollTrigger: { trigger: ref.current, start: "center center", end: "bottom top", scrub: true },
+        scrollTrigger: { trigger: root, start: "center center", end: "bottom top", scrub: true },
       });
-
-      return () => window.removeEventListener("tecniair:intro-done", play);
     },
     { scope: ref },
   );
@@ -189,24 +184,17 @@ export function Hero() {
 
       <div className="hero-content mx-auto grid w-full max-w-7xl flex-1 items-end gap-10 px-4 pb-10 pt-32 sm:px-8 lg:grid-cols-12 lg:pb-16">
         <div className="lg:col-span-8">
-          <p className="hero-fade mb-6 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[0.92rem] text-white/80 backdrop-blur">
-            <span className="size-2 rounded-full bg-glacier [animation:pulse-dot_2s_ease-in-out_infinite]" />
-            Técnicos disponibles hoy en Armenia
-          </p>
-          <h1
-            className="type-display text-[clamp(4rem,12vw,11rem)]"
-            aria-label="Frío de verdad."
-          >
-            <span className="hero-line line-mask" aria-hidden="true">
-              <span>Frío de</span>
+          <h1 className="type-display text-[clamp(3.8rem,12vw,11rem)]">
+            <span className="mb-6 flex items-center gap-2.5 text-[clamp(1rem,1.4vw,1.15rem)] font-semibold tracking-normal text-white/85 [font-stretch:100%]">
+              <span className="size-2 shrink-0 rounded-full bg-glacier [animation:pulse-dot_2s_ease-in-out_infinite]" />
+              Aire acondicionado en Armenia y el Quindío
             </span>
-            <span className="hero-line line-mask" aria-hidden="true">
-              <span className="!inline-block bg-gradient-to-r from-frost via-glacier to-electric bg-clip-text pb-[0.08em] pr-[0.12em] text-transparent">
-                verdad.
-              </span>
+            <span className="block">Frío de</span>
+            <span className="inline-block bg-gradient-to-r from-frost via-glacier to-electric bg-clip-text pb-[0.08em] pr-[0.12em] text-transparent">
+              verdad.
             </span>
           </h1>
-          <p className="hero-fade mt-7 max-w-[50ch] text-[1.08rem] text-white/75 sm:text-[1.2rem]">
+          <p className="mt-7 max-w-[50ch] text-[1.08rem] text-white/75 sm:text-[1.2rem]">
             Instalamos, reparamos y hacemos mantenimiento a aires acondicionados en Armenia,
             Quindío. Vamos a tu casa o negocio y te damos el precio antes de empezar.
           </p>

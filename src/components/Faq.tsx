@@ -1,44 +1,21 @@
 import { PlusIcon, WhatsAppIcon } from "@/components/icons";
 import { RevealHeading } from "@/components/motion/RevealHeading";
-import { business, whatsappUrl } from "@/lib/business";
+import { whatsappUrl } from "@/lib/business";
+import type { Faq as FaqItem } from "@/lib/content";
 
-const faqs = [
-  {
-    q: "¿Cada cuánto le hago mantenimiento a mi aire?",
-    a: "En casa, cada 6 meses. En oficinas y locales que lo usan todo el día, cada 3 o 4 meses. Un equipo limpio enfría más rápido y consume menos energía.",
-  },
-  {
-    q: "¿Por qué mi aire gotea agua?",
-    a: "Casi siempre es el desagüe tapado o los filtros sucios. En la mayoría de los casos se resuelve con un mantenimiento.",
-  },
-  {
-    q: "¿Cuánto se demora una instalación?",
-    a: "Una instalación estándar de mini split toma entre 3 y 5 horas, según la distancia entre las unidades y la altura de la fachada.",
-  },
-  {
-    q: "¿Me conviene un aire inverter?",
-    a: "El inverter regula la velocidad del compresor en lugar de prenderse y apagarse, así que gasta menos energía. Si lo usas varias horas al día, suele valer la pena.",
-  },
-  {
-    q: "¿Atienden fuera de Armenia?",
-    a: `Atendemos ${business.coverage}. Escríbenos con tu ubicación y te confirmamos el día de la visita.`,
-  },
-  {
-    q: "¿Los trabajos tienen garantía?",
-    a: "Sí. Cada instalación, reparación y mantenimiento queda con garantía por escrito.",
-  },
-];
+type FaqProps = {
+  items: FaqItem[];
+  title?: string[];
+  id?: string;
+};
 
-export function Faq() {
+export function Faq({ items, title = ["Preguntas", "frecuentes"], id = "preguntas" }: FaqProps) {
   return (
-    <section id="preguntas" className="bg-abyss py-24 sm:py-32">
+    <section id={id} className="bg-abyss py-24 sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-8 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <RevealHeading
-            lines={["Preguntas", "frecuentes"]}
-            className="type-display text-[clamp(2.4rem,4.2vw,3.6rem)]"
-          />
-          <p className="mt-6 max-w-[34ch] text-white/65">
+          <RevealHeading lines={title} className="type-display text-[clamp(2.4rem,4.2vw,3.6rem)]" />
+          <p className="mt-6 max-w-[34ch] text-white/70">
             Si tu pregunta no está aquí, escríbenos y te respondemos por WhatsApp.
           </p>
           <a
@@ -52,7 +29,7 @@ export function Faq() {
           </a>
         </div>
         <div className="lg:col-span-7 lg:col-start-6">
-          {faqs.map((item) => (
+          {items.map((item) => (
             <details
               key={item.q}
               className="group mb-3 rounded-3xl border border-white/10 bg-white/[0.03] px-6 transition-colors open:border-glacier/40 open:bg-white/[0.06]"
@@ -63,7 +40,7 @@ export function Faq() {
                   <PlusIcon className="size-5" />
                 </span>
               </summary>
-              <p className="max-w-[60ch] pb-7 text-white/70">{item.a}</p>
+              <p className="max-w-[60ch] pb-7 text-white/75">{item.a}</p>
             </details>
           ))}
         </div>

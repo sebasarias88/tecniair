@@ -142,7 +142,7 @@ export function BtuCalculator() {
                 className="range"
                 style={{ ["--fill" as string]: fill }}
               />
-              <p className="text-[0.9rem] text-white/45">
+              <p className="text-[0.9rem] text-white/65">
                 Largo por ancho. Un cuarto típico mide entre 9 y 16 m².
               </p>
             </div>
@@ -238,7 +238,7 @@ export function BtuCalculator() {
                     <li
                       key={size}
                       className={`type-condensed rounded-lg py-1.5 text-center text-[0.78rem] transition-colors sm:text-[0.85rem] ${
-                        active ? "bg-glacier text-abyss" : "text-white/40"
+                        active ? "bg-glacier text-abyss" : "text-white/60"
                       }`}
                     >
                       {size / 1000}k
@@ -247,7 +247,7 @@ export function BtuCalculator() {
                 })}
               </ol>
 
-              <p className="mt-6 text-center text-[0.9rem] text-white/50">
+              <p className="mt-6 text-center text-[0.9rem] text-white/65">
                 Carga estimada: {formatBtu(raw)} BTU/h. En la visita medimos y confirmamos la
                 capacidad antes de cotizar.
               </p>

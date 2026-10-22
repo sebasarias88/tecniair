@@ -1,70 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
 import { WhatsAppIcon } from "@/components/icons";
 import { RevealHeading } from "@/components/motion/RevealHeading";
 import { whatsappUrl } from "@/lib/business";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
-import { images } from "@/lib/images";
+import { services } from "@/lib/content";
 
-const services = [
-  {
-    id: "instalacion",
-    name: "Instalación",
-    summary: "Montamos tu equipo nivelado, sellado y sin fugas, listo para enfriar desde el primer día.",
-    includes: [
-      "Mini split, piso techo y cassette",
-      "Tubería de cobre, soportes y desagüe",
-      "Vacío del sistema antes de liberar el gas",
-      "Prueba de funcionamiento",
-    ],
-    image: images.rooftopCrew,
-    cta: "Cotizar instalación",
-    message: "Hola Tecniair, quiero cotizar la instalación de un aire acondicionado.",
-  },
-  {
-    id: "mantenimiento",
-    name: "Mantenimiento",
-    summary: "Lavado profundo para que enfríe como nuevo, huela bien y consuma menos energía.",
-    includes: [
-      "Lavado de filtros, serpentines y turbina",
-      "Limpieza de bandeja y desagüe",
-      "Revisión de presión del refrigerante",
-      "Medición de consumo eléctrico",
-    ],
-    image: images.technicianHelmet,
-    cta: "Programar mantenimiento",
-    message: "Hola Tecniair, quiero programar un mantenimiento para mi aire acondicionado.",
-  },
-  {
-    id: "reparacion",
-    name: "Reparación",
-    summary: "Encontramos la falla, te mostramos qué pasa y te damos el precio antes de arreglarla.",
-    includes: [
-      "Diagnóstico eléctrico y de refrigeración",
-      "Detección y reparación de fugas",
-      "Carga de refrigerante",
-      "Capacitores, motores y tarjetas",
-    ],
-    image: images.technicianPanel,
-    cta: "Pedir diagnóstico",
-    message: "Hola Tecniair, mi aire acondicionado tiene una falla y necesito un diagnóstico.",
-  },
-  {
-    id: "equipos",
-    name: "Venta de equipos",
-    summary: "Te ayudamos a elegir la capacidad y la tecnología correctas, y lo dejamos instalado.",
-    includes: [
-      "Equipos convencionales e inverter",
-      "Capacidad calculada para tu espacio",
-      "Suministro e instalación en un solo servicio",
-    ],
-    image: images.splitDisplay,
-    cta: "Cotizar un equipo",
-    message: "Hola Tecniair, quiero cotizar un aire acondicionado con instalación.",
-  },
-];
+const featured = services.filter((s) => s.featured);
 
 export function ServicesShowcase() {
   const ref = useRef<HTMLElement>(null);
@@ -153,6 +98,7 @@ export function ServicesShowcase() {
         <div className="flex shrink-0 flex-col justify-center lg:w-[34vw] lg:pr-8">
           <RevealHeading
             lines={["Todo lo que", "tu aire", "necesita."]}
+            as="h2"
             className="type-display text-[clamp(2.8rem,4.4vw,4.6rem)]"
           />
           <p className="mt-6 max-w-[38ch] text-white/65">
@@ -164,9 +110,9 @@ export function ServicesShowcase() {
           </div>
         </div>
 
-        {services.map((service) => (
+        {featured.map((service) => (
           <article
-            key={service.id}
+            key={service.slug}
             className="service-panel relative flex min-h-[34rem] shrink-0 overflow-hidden rounded-[2rem] ring-1 ring-white/10 lg:h-[78svh] lg:min-h-0 lg:w-[min(64vw,980px)]"
           >
             <div className="absolute inset-0 overflow-hidden">
@@ -190,27 +136,36 @@ export function ServicesShowcase() {
             />
             <div className="relative mt-auto grid w-full gap-6 p-6 sm:p-10 lg:grid-cols-2 lg:items-end">
               <div>
-                <h3 className="type-display text-[clamp(2.4rem,4.6vw,4.4rem)]">{service.name}</h3>
-                <p className="mt-4 max-w-[40ch] text-white/75">{service.summary}</p>
+                <h3 className="type-display text-[clamp(2.4rem,4.6vw,4.4rem)]">{service.shortName}</h3>
+                <p className="mt-4 max-w-[40ch] text-white/75">{service.intro}</p>
               </div>
               <div>
                 <ul className="space-y-2.5">
-                  {service.includes.map((item) => (
+                  {service.includes.slice(0, 4).map((item) => (
                     <li key={item} className="flex items-baseline gap-3 text-white/85">
                       <span aria-hidden="true" className="h-px w-5 shrink-0 translate-y-[-0.3em] bg-glacier" />
                       {item}
                     </li>
                   ))}
                 </ul>
-                <a
-                  href={whatsappUrl(service.message)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-7 inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-abyss transition-colors hover:bg-glacier"
-                >
-                  <WhatsAppIcon className="size-5" />
-                  {service.cta}
-                </a>
+                <div className="mt-7 flex flex-wrap items-center gap-2">
+                  <a
+                    href={whatsappUrl(service.message)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-abyss transition-colors hover:bg-glacier"
+                  >
+                    <WhatsAppIcon className="size-5" />
+                    {service.cta}
+                  </a>
+                  <Link
+                    href={`/servicios/${service.slug}`}
+                    className="inline-flex items-center rounded-full border border-white/25 px-5 py-3.5 font-semibold transition-colors hover:border-white/60"
+                  >
+                    Ver detalles
+                    <span className="sr-only"> de {service.name}</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </article>

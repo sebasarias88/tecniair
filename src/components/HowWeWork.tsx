@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { Logo } from "@/components/Logo";
 import { RevealHeading } from "@/components/motion/RevealHeading";
 import { business } from "@/lib/business";
-import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
+import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 const plateRows = [
   { label: "Servicio", value: "Instalación, mantenimiento, reparación y venta" },
@@ -66,21 +66,12 @@ export function HowWeWork() {
       );
 
       gsap.utils.toArray<HTMLElement>(".step-item").forEach((item) => {
-        gsap.fromTo(
-          item,
-          { autoAlpha: 0.25 },
-          {
-            autoAlpha: 1,
-            duration: 0.4,
-            scrollTrigger: {
-              trigger: item,
-              start: "top 62%",
-              toggleActions: "play none none reverse",
-              onEnter: () => item.classList.add("is-active"),
-              onLeaveBack: () => item.classList.remove("is-active"),
-            },
-          },
-        );
+        ScrollTrigger.create({
+          trigger: item,
+          start: "top 62%",
+          onEnter: () => item.classList.add("is-active"),
+          onLeaveBack: () => item.classList.remove("is-active"),
+        });
       });
 
       gsap.from(".spec-plate", {
@@ -119,19 +110,19 @@ export function HowWeWork() {
 
               <div className="flex items-center justify-between gap-4 border-b border-white/15 pb-4">
                 <Logo />
-                <span className="type-condensed text-right text-[0.85rem] text-white/50">
+                <span className="type-condensed text-right text-[0.85rem] text-white/65">
                   Ficha técnica
                 </span>
               </div>
               <dl className="divide-y divide-white/10">
                 {plateRows.map((row) => (
                   <div key={row.label} className="grid grid-cols-[7rem_1fr] gap-4 py-2.5 sm:grid-cols-[8rem_1fr]">
-                    <dt className="type-condensed text-[0.92rem] text-white/50">{row.label}</dt>
+                    <dt className="type-condensed text-[0.92rem] text-white/65">{row.label}</dt>
                     <dd className="text-[0.98rem] font-medium">{row.value}</dd>
                   </div>
                 ))}
               </dl>
-              <figcaption className="type-condensed mt-4 border-t border-white/15 pt-3 text-[0.8rem] text-white/45">
+              <figcaption className="type-condensed mt-4 border-t border-white/15 pt-3 text-[0.8rem] text-white/65">
                 {business.address}, {business.city}
               </figcaption>
             </figure>
