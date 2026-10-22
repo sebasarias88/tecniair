@@ -1,21 +1,38 @@
 /**
  * Single source of truth for Tecniair's business data.
- * Everything here was taken from their Instagram (@tecniair).
- * Items marked TODO need confirmation with the client before going live.
+ * Contact data comes from their Instagram (@tecniair).
  */
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.tecniair.com.co").replace(
+  /\/$/,
+  "",
+);
+
 export const business = {
   name: "Tecniair",
+  legalName: "Tecniair",
   tagline: "Fresco siempre",
   description:
-    "Instalación, reparación, suministro y mantenimiento de aires acondicionados en Armenia, Quindío.",
+    "Instalación, mantenimiento, reparación y venta de aires acondicionados en Armenia y el Quindío. Hogares, negocios, hoteles, casinos y obra nueva.",
   phoneDisplay: "311 201 1682",
   phoneE164: "+573112011682",
   whatsappNumber: "573112011682",
   email: "santiagotecniair@gmail.com",
   address: "Barrio Los Andes, Manzana 13, Casa 2",
+  locality: "Armenia",
+  region: "Quindío",
+  postalCode: "630001",
   city: "Armenia, Quindío",
-  // TODO: confirm real coverage area with the client.
   coverage: "Armenia y municipios cercanos del Quindío",
+  serviceArea: [
+    "Armenia",
+    "Calarcá",
+    "Circasia",
+    "La Tebaida",
+    "Montenegro",
+    "Quimbaya",
+    "Salento",
+    "Filandia",
+  ],
   instagram: "https://www.instagram.com/tecniair/",
   instagramHandle: "@tecniair",
   mapsQuery: "Barrio Los Andes, Armenia, Quindío, Colombia",

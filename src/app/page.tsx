@@ -1,37 +1,33 @@
 import { BtuCalculator } from "@/components/BtuCalculator";
-import { Coverage } from "@/components/Coverage";
+import { BusinessPlans } from "@/components/BusinessPlans";
 import { Faq } from "@/components/Faq";
 import { Hero } from "@/components/Hero";
 import { HowWeWork } from "@/components/HowWeWork";
+import { JsonLd } from "@/components/JsonLd";
 import { MarqueeBand } from "@/components/MarqueeBand";
-import { SmoothScroll } from "@/components/motion/SmoothScroll";
-import { Preloader } from "@/components/Preloader";
+import { MoreServices } from "@/components/MoreServices";
+import { SectorsExplorer } from "@/components/SectorsExplorer";
 import { ServicesShowcase } from "@/components/ServicesShowcase";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
 import { SymptomPicker } from "@/components/SymptomPicker";
 import { ThermostatStory } from "@/components/ThermostatStory";
-import { WhatsAppDock } from "@/components/WhatsAppDock";
+import { homeFaqs } from "@/lib/content";
+import { faqJsonLd } from "@/lib/seo";
 
 export default function HomePage() {
   return (
-    <>
-      <SmoothScroll />
-      <Preloader />
-      <SiteHeader />
-      <main>
-        <Hero />
-        <ThermostatStory />
-        <ServicesShowcase />
-        <MarqueeBand />
-        <SymptomPicker />
-        <BtuCalculator />
-        <HowWeWork />
-        <Coverage />
-        <Faq />
-      </main>
-      <SiteFooter />
-      <WhatsAppDock />
-    </>
+    <main>
+      <Hero />
+      <ThermostatStory />
+      <ServicesShowcase />
+      <MoreServices />
+      <MarqueeBand />
+      <SectorsExplorer />
+      <BusinessPlans />
+      <SymptomPicker />
+      <BtuCalculator />
+      <HowWeWork />
+      <Faq items={homeFaqs} />
+      <JsonLd data={faqJsonLd(homeFaqs)} />
+    </main>
   );
 }

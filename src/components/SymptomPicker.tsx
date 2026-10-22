@@ -144,7 +144,7 @@ export function SymptomPicker() {
               <fieldset>
                 <legend className="mb-3 font-semibold">
                   ¿Qué está pasando?{" "}
-                  <span className="font-normal text-white/50">Puedes marcar varias.</span>
+                  <span className="font-normal text-white/65">Puedes marcar varias.</span>
                 </legend>
                 <div className="flex flex-wrap gap-2">
                   {symptoms.map((s) => (
@@ -188,7 +188,7 @@ export function SymptomPicker() {
               </div>
               <div>
                 <label htmlFor={nameId} className="mb-2 block font-semibold">
-                  Tu nombre <span className="font-normal text-white/50">(opcional)</span>
+                  Tu nombre <span className="font-normal text-white/65">(opcional)</span>
                 </label>
                 <input
                   id={nameId}
@@ -235,7 +235,7 @@ export function SymptomPicker() {
                     className="ml-auto max-w-[90%] rounded-2xl rounded-tr-sm bg-[#005c4b] px-4 py-3 text-[0.98rem] leading-relaxed text-white shadow-lg"
                   >
                     {message}
-                    <span className="mt-1 block text-right text-[0.72rem] text-white/55">ahora ✓✓</span>
+                    <span className="mt-1 block text-right text-[0.72rem] text-white/75">ahora ✓✓</span>
                   </div>
                 </div>
               </div>

@@ -62,7 +62,7 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.round(Math.min(220, (width * height) / 7000));
+      const count = Math.round(Math.min(width < 768 ? 55 : 200, (width * height) / 7000));
       particles = Array.from({ length: count }, () =>
         spawn({ life: Math.random() * 300, x: Math.random() * width, y: Math.random() * height }),
       );
@@ -134,14 +134,26 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
       if (visible && !raf) raf = requestAnimationFrame(draw);
     });
 
-    resize();
-    io.observe(canvas);
-    window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", onPointer, { passive: true });
-    document.addEventListener("pointerleave", onLeave);
-    raf = requestAnimationFrame(draw);
+    // Start once the browser is idle so the animation never competes with the first paint.
+    let started = false;
+    const start = () => {
+      if (started) return;
+      started = true;
+      resize();
+      io.observe(canvas);
+      window.addEventListener("resize", resize);
+      window.addEventListener("pointermove", onPointer, { passive: true });
+      document.addEventListener("pointerleave", onLeave);
+      raf = requestAnimationFrame(draw);
+      canvas.style.opacity = "1";
+    };
+    const idle = window.requestIdleCallback
+      ? window.requestIdleCallback(start, { timeout: 1500 })
+      : window.setTimeout(start, 600);
 
     return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
       cancelAnimationFrame(raf);
       io.disconnect();
       window.removeEventListener("resize", resize);
@@ -150,5 +162,11 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
     };
   }, [intensityRef]);
 
-  return <canvas ref={canvasRef} aria-hidden="true" className={`pointer-events-none ${className}`} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className={`pointer-events-none opacity-0 transition-opacity duration-1000 ${className}`}
+    />
+  );
 }

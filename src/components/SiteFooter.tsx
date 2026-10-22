@@ -2,7 +2,9 @@ import { Logo } from "@/components/Logo";
 import { InstagramIcon, PhoneIcon, WhatsAppIcon } from "@/components/icons";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { RevealHeading } from "@/components/motion/RevealHeading";
+import Link from "next/link";
 import { business, defaultWhatsappMessage, whatsappUrl } from "@/lib/business";
+import { sectors, services } from "@/lib/content";
 
 export function SiteFooter() {
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(business.mapsQuery)}&output=embed`;
@@ -49,20 +51,16 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-28 grid gap-10 border-t border-white/10 py-14 md:grid-cols-12">
-          <div className="md:col-span-4">
+        <div className="mt-28 grid gap-12 border-t border-white/10 py-14 sm:grid-cols-2 lg:grid-cols-12">
+          <div className="lg:col-span-4">
             <Logo />
-            <p className="mt-5 max-w-[34ch] text-white/55">{business.description}</p>
-          </div>
-          <address className="not-italic md:col-span-3">
-            <p className="font-semibold">Dónde estamos</p>
-            <p className="mt-3 text-white/65">
+            <p className="mt-5 max-w-[34ch] text-white/65">{business.description}</p>
+            <address className="mt-6 not-italic text-white/70">
               {business.address}
               <br />
               {business.city}
-            </p>
-            <p className="mt-6 font-semibold">Contacto</p>
-            <ul className="mt-3 space-y-1.5 text-white/65">
+            </address>
+            <ul className="mt-5 space-y-1.5 text-white/70">
               <li>
                 <a href={`tel:${business.phoneE164}`} className="hover:text-glacier">
                   {business.phoneDisplay}
@@ -85,19 +83,45 @@ export function SiteFooter() {
                 </a>
               </li>
             </ul>
-          </address>
-          <div className="md:col-span-5">
+          </div>
+          <nav aria-label="Servicios" className="lg:col-span-3">
+            <p className="font-semibold">Servicios</p>
+            <ul className="mt-4 space-y-2 text-white/70">
+              {services.map((s) => (
+                <li key={s.slug}>
+                  <Link href={`/servicios/${s.slug}`} className="hover:text-glacier">
+                    {s.shortName}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <nav aria-label="Sectores" className="lg:col-span-2">
+            <p className="font-semibold">Sectores</p>
+            <ul className="mt-4 space-y-2 text-white/70">
+              {sectors.map((s) => (
+                <li key={s.slug}>
+                  <Link href={`/sectores/${s.slug}`} className="hover:text-glacier">
+                    {s.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div className="lg:col-span-3">
+            <p className="font-semibold">Dónde atendemos</p>
+            <p className="mt-4 text-white/70">{business.serviceArea.join(", ")}.</p>
             <iframe
               title="Ubicación de Tecniair en Armenia"
               src={mapSrc}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              className="h-64 w-full rounded-3xl border border-white/10 [filter:invert(0.92)_hue-rotate(180deg)_saturate(0.6)]"
+              className="mt-6 h-48 w-full rounded-3xl border border-white/10 [filter:invert(0.92)_hue-rotate(180deg)_saturate(0.6)]"
             />
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-between gap-4 border-t border-white/10 py-8 text-[0.9rem] text-white/40">
+        <div className="flex flex-wrap justify-between gap-4 border-t border-white/10 py-8 text-[0.9rem] text-white/55">
           <p>© Tecniair. Armenia, Quindío.</p>
           <p>Fresco siempre.</p>
         </div>
