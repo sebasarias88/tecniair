@@ -2,7 +2,7 @@
  * Single source of truth for Tecniair's business data.
  * Contact data comes from their Instagram (@tecniair).
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.tecniair.com.co").replace(
+export const SITE_URL = (process.env.SITE_URL ?? "https://www.tecniair.com.co").replace(
   /\/$/,
   "",
 );
