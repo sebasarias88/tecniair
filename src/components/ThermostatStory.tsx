@@ -50,7 +50,7 @@ export function ThermostatStory() {
         scrollTrigger: {
           trigger: ref.current,
           start: "top top",
-          end: "+=260%",
+          end: "+=180%",
           pin: true,
           scrub: 0.8,
         },

@@ -45,12 +45,12 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
       return {
         x: width * (0.35 + Math.random() * 0.8),
         y: -20 + Math.random() * height * 0.5,
-        vx: -(0.6 + Math.random() * 1.2),
-        vy: 0.5 + Math.random() * 1.1,
-        len: 14 + Math.random() * 46,
+        vx: -(1.1 + Math.random() * 1.3),
+        vy: 0.2 + Math.random() * 0.45,
+        len: 30 + Math.random() * 70,
         life: 0,
         maxLife,
-        width: 0.6 + Math.random() * 1.6,
+        width: 0.5 + Math.random() * 1.1,
         ...p,
       };
     };
@@ -62,7 +62,7 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.round(Math.min(width < 768 ? 55 : 200, (width * height) / 7000));
+      const count = Math.round(Math.min(width < 768 ? 35 : 110, (width * height) / 11000));
       particles = Array.from({ length: count }, () =>
         spawn({ life: Math.random() * 300, x: Math.random() * width, y: Math.random() * height }),
       );
@@ -94,7 +94,7 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
         p.life += 1;
 
         const t = p.life / p.maxLife;
-        const alpha = Math.sin(Math.PI * Math.min(1, t)) * (0.18 + intensity * 0.5);
+        const alpha = Math.sin(Math.PI * Math.min(1, t)) * (0.08 + intensity * 0.28);
         const tail = p.len * (0.5 + intensity);
         const angle = Math.atan2(p.vy, p.vx);
 
