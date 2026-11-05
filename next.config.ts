@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
   images: {
     loader: "custom",
     loaderFile: "./src/lib/imageLoader.ts",
+    // Every quality passed to next/image must be listed here (Next 16).
+    qualities: [60, 75],
   },
   async headers() {
     return [
@@ -30,8 +32,7 @@ const nextConfig: NextConfig = {
     // Short, shareable URLs for ads and social bios.
     return [
       { source: "/whatsapp", destination: "https://wa.me/573112011682", permanent: false },
-      { source: "/servicios", destination: "/#servicios", permanent: false },
-      { source: "/sectores", destination: "/#sectores", permanent: false },
+      { source: "/sectores", destination: "/empresas", permanent: true },
     ];
   },
   turbopack: {

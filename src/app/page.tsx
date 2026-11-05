@@ -1,33 +1,25 @@
-import { BtuCalculator } from "@/components/BtuCalculator";
-import { BusinessPlans } from "@/components/BusinessPlans";
 import { Faq } from "@/components/Faq";
-import { GoogleReviews } from "@/components/GoogleReviews";
-import { Hero } from "@/components/Hero";
-import { HowWeWork } from "@/components/HowWeWork";
+import { HomeHero } from "@/components/home/HomeHero";
+import { BusinessBand, HomeServices, ReviewsCoverage, ToolsTeaser } from "@/components/home/HomeSections";
 import { JsonLd } from "@/components/JsonLd";
-import { MoreServices } from "@/components/MoreServices";
-import { SectorsExplorer } from "@/components/SectorsExplorer";
-import { ServicesShowcase } from "@/components/ServicesShowcase";
-import { SymptomPicker } from "@/components/SymptomPicker";
-import { ThermostatStory } from "@/components/ThermostatStory";
+import { CtaBand, Steps } from "@/components/ui";
 import { homeFaqs } from "@/lib/content";
 import { faqJsonLd } from "@/lib/seo";
+
+const shortFaqs = homeFaqs.slice(0, 4);
 
 export default function HomePage() {
   return (
     <main>
-      <Hero />
-      <ThermostatStory />
-      <ServicesShowcase />
-      <GoogleReviews />
-      <MoreServices />
-      <SectorsExplorer />
-      <BusinessPlans />
-      <SymptomPicker />
-      <BtuCalculator />
-      <HowWeWork />
-      <Faq items={homeFaqs} />
-      <JsonLd data={faqJsonLd(homeFaqs)} />
+      <HomeHero />
+      <HomeServices />
+      <Steps />
+      <ReviewsCoverage />
+      <BusinessBand />
+      <ToolsTeaser />
+      <Faq items={shortFaqs} showAllLink />
+      <CtaBand />
+      <JsonLd data={faqJsonLd(shortFaqs)} />
     </main>
   );
 }

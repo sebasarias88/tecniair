@@ -1,43 +1,57 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
-import { PhoneIcon, WhatsAppIcon } from "@/components/icons";
-import { business, defaultWhatsappMessage, whatsappUrl } from "@/lib/business";
-import { sectors, services } from "@/lib/content";
+import { WhatsAppIcon } from "@/components/icons";
+import { defaultWhatsappMessage, whatsappUrl } from "@/lib/business";
+import { isActive, navGroups, navLinks } from "@/lib/navigation";
 
-type Panel = "services" | "sectors" | null;
-
-const quickLinks = [
-  { href: "/#calculadora", label: "Calculadora" },
-  { href: "/#preguntas", label: "Preguntas" },
-];
-
-function MenuIcon({ open }: { open: boolean }) {
+function Chevron({ open }: { open: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-      {open ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 8h16M4 16h16" />}
+    <svg
+      viewBox="0 0 24 24"
+      className={`size-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="m6 9 6 6 6-6" />
     </svg>
   );
 }
 
 export function SiteHeader() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [panel, setPanel] = useState<Panel>(null);
+  const [panel, setPanel] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const closeTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close menus whenever the route changes (adjusting state during render, no effect needed).
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setPanel(null);
+    setMobileOpen(false);
+  }
+
   useEffect(() => {
-    window.dispatchEvent(new Event(mobileOpen ? "tecniair:lock" : "tecniair:unlock"));
     document.documentElement.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   useEffect(() => {
@@ -58,62 +72,104 @@ export function SiteHeader() {
     };
   }, []);
 
-  const closeAll = () => {
-    setPanel(null);
-    setMobileOpen(false);
+  // Mouse users get hover menus; touch and keyboard users toggle on click.
+  const openOnHover = (id: string) => (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    window.clearTimeout(closeTimer.current);
+    setPanel(id);
+  };
+  const closeOnLeave = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    closeTimer.current = window.setTimeout(() => setPanel(null), 160);
   };
 
-  const panelItems =
-    panel === "services"
-      ? services.map((s) => ({ href: `/servicios/${s.slug}`, label: s.shortName, text: s.headline }))
-      : sectors.map((s) => ({ href: `/sectores/${s.slug}`, label: s.name, text: s.headline }));
+  const group = navGroups.find((g) => g.id === panel);
 
   return (
-    <header ref={headerRef} className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
-      {/* Scrim so content scrolling under the floating bar never shows through around it */}
-      <div
-        aria-hidden="true"
-        className={`absolute inset-x-0 top-0 -z-10 h-[calc(100%+2rem)] bg-gradient-to-b from-abyss via-abyss/65 to-transparent transition-opacity duration-500 ${
-          scrolled || panel ? "opacity-100" : "opacity-0"
-        }`}
-      />
-      <div
-        className={`pointer-events-auto relative mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500 sm:px-5 ${
-          scrolled || panel ? "border border-white/10 bg-[#081a2e] shadow-[0_20px_50px_-20px_rgb(0_0_0/0.8)]" : "border border-transparent"
-        }`}
-      >
-        <Link href="/" onClick={closeAll}>
+    <header
+      ref={headerRef}
+      className={`fixed inset-x-0 top-0 z-50 border-b bg-white transition-shadow duration-300 ${
+        scrolled || panel ? "border-line shadow-[0_10px_30px_-18px_rgb(10_27_46/0.35)]" : "border-transparent"
+      }`}
+    >
+      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-6">
+        <Link href="/" className="rounded-xl">
           <Logo />
         </Link>
 
-        <nav aria-label="Principal" className="hidden items-center gap-1 lg:flex">
-          {(["services", "sectors"] as const).map((key) => (
-            <button
-              key={key}
-              type="button"
-              aria-expanded={panel === key}
-              aria-controls="header-panel"
-              onClick={() => setPanel((p) => (p === key ? null : key))}
-              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-[0.95rem] transition-colors hover:bg-white/10 hover:text-white ${
-                panel === key ? "bg-white/10 text-white" : "text-white/80"
-              }`}
+        <nav aria-label="Principal" className="hidden h-full items-center gap-1 lg:flex" onPointerLeave={closeOnLeave}>
+          {navGroups.map((g) => {
+            const open = panel === g.id;
+            const active = isActive(pathname, g.href);
+            return (
+              <button
+                key={g.id}
+                type="button"
+                aria-expanded={open}
+                aria-controls="header-panel"
+                onClick={() => setPanel((p) => (p === g.id ? null : g.id))}
+                onPointerEnter={openOnHover(g.id)}
+                className={`flex h-11 items-center gap-1.5 rounded-full px-4 text-[0.98rem] font-semibold transition-colors ${
+                  open || active ? "bg-ice text-brand" : "text-ink hover:bg-ice"
+                }`}
+              >
+                {g.label}
+                <Chevron open={open} />
+              </button>
+            );
+          })}
+          {navLinks.map((link) => {
+            const active = isActive(pathname, link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                onPointerEnter={() => setPanel(null)}
+                className={`flex h-11 items-center rounded-full px-4 text-[0.98rem] font-semibold transition-colors ${
+                  active ? "bg-ice text-brand" : "text-ink hover:bg-ice"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
+          {group && (
+            <div
+              id="header-panel"
+              onPointerEnter={() => window.clearTimeout(closeTimer.current)}
+              className="absolute inset-x-0 top-full border-b border-line bg-white shadow-[0_30px_50px_-30px_rgb(10_27_46/0.35)] [animation:enter-up_0.25s_var(--ease-out-expo)]"
             >
-              {key === "services" ? "Servicios" : "Sectores"}
-              <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${panel === key ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-          ))}
-          {quickLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={closeAll}
-              className="rounded-full px-4 py-2 text-[0.95rem] text-white/80 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              {link.label}
-            </Link>
-          ))}
+              <div className="mx-auto max-w-7xl px-6 py-6">
+                <ul className="grid grid-cols-3 gap-1 xl:grid-cols-4">
+                  {group.items.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={pathname === item.href ? "page" : undefined}
+                        className={`block rounded-2xl px-4 py-3.5 transition-colors hover:bg-ice ${
+                          pathname === item.href ? "bg-ice" : ""
+                        }`}
+                      >
+                        <span className="block font-semibold text-ink">{item.label}</span>
+                        <span className="mt-0.5 block text-[0.9rem] leading-snug text-ink-2">{item.text}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={group.footer.href}
+                  className="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-brand hover:bg-ice"
+                >
+                  {group.footer.label}
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          )}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -121,17 +177,10 @@ export function SiteHeader() {
             href={whatsappUrl(defaultWhatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-ice hidden items-center gap-2 rounded-full px-5 py-2.5 font-semibold md:inline-flex"
+            className="btn btn-wa hidden sm:inline-flex"
           >
             <WhatsAppIcon className="size-5" />
             Escríbenos
-          </a>
-          <a
-            href={`tel:${business.phoneE164}`}
-            aria-label={`Llamar al ${business.phoneDisplay}`}
-            className="grid size-11 place-items-center rounded-full border border-white/15 transition-colors hover:border-white/40 md:hidden"
-          >
-            <PhoneIcon className="size-5" />
           </a>
           <button
             type="button"
@@ -139,76 +188,71 @@ export function SiteHeader() {
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
             onClick={() => setMobileOpen((o) => !o)}
-            className="grid size-11 place-items-center rounded-full border border-white/15 bg-white/5 lg:hidden"
+            className="grid size-12 place-items-center rounded-full border border-line-2 text-ink lg:hidden"
           >
-            <MenuIcon open={mobileOpen} />
+            <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              {mobileOpen ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 8h16M4 16h16" />}
+            </svg>
           </button>
         </div>
-
-        {/* Desktop mega menu */}
-        {panel && (
-          <div
-            id="header-panel"
-            className="absolute inset-x-0 top-[calc(100%+0.75rem)] hidden rounded-[2rem] border border-white/12 bg-navy p-4 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9)] lg:block"
-          >
-            <ul className="grid grid-cols-2 gap-1 xl:grid-cols-3">
-              {panelItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={closeAll}
-                    className="block rounded-2xl px-5 py-4 transition-colors hover:bg-white/10"
-                  >
-                    <span className="block font-semibold">{item.label}</span>
-                    <span className="mt-1 block text-[0.9rem] text-white/60">{item.text}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
 
       {/* Mobile menu */}
       <div
         id="mobile-menu"
         hidden={!mobileOpen}
-        className="pointer-events-auto fixed inset-0 top-0 -z-10 overflow-y-auto bg-abyss px-5 pb-32 pt-24 lg:hidden"
+        className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto border-t border-line bg-white px-4 pb-10 pt-4 sm:top-20 sm:px-6 lg:hidden"
       >
-        <nav aria-label="Menú móvil" className="space-y-10">
-          <div>
-            <p className="type-condensed mb-3 text-[0.95rem] text-glacier">Servicios</p>
-            <ul className="space-y-1">
-              {services.map((s) => (
-                <li key={s.slug}>
-                  <Link href={`/servicios/${s.slug}`} onClick={closeAll} className="block py-2 text-[1.35rem] font-semibold [font-stretch:110%]">
-                    {s.shortName}
+        <nav aria-label="Menú móvil" className="mx-auto max-w-2xl">
+          {navGroups.map((g) => (
+            <details key={g.id} className="group border-b border-line" open={isActive(pathname, g.href)}>
+              <summary className="flex min-h-14 items-center justify-between font-display text-[1.45rem]">
+                {g.label}
+                <span className="transition-transform group-open:rotate-180">
+                  <Chevron open={false} />
+                </span>
+              </summary>
+              <ul className="grid gap-0.5 pb-4 sm:grid-cols-2">
+                {g.items.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={pathname === item.href ? "page" : undefined}
+                      className={`block rounded-xl px-3 py-2.5 text-[1.05rem] ${pathname === item.href ? "bg-ice font-semibold text-brand" : "text-ink"}`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link href={g.footer.href} className="block rounded-xl px-3 py-2.5 font-semibold text-brand">
+                    {g.footer.label}
                   </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <p className="type-condensed mb-3 text-[0.95rem] text-glacier">Sectores</p>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-1">
-              {sectors.map((s) => (
-                <li key={s.slug}>
-                  <Link href={`/sectores/${s.slug}`} onClick={closeAll} className="block py-2 text-[1.05rem] text-white/85">
-                    {s.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <ul className="flex flex-wrap gap-2">
-            {quickLinks.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} onClick={closeAll} className="inline-block rounded-full border border-white/15 px-5 py-2.5">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+              </ul>
+            </details>
+          ))}
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              aria-current={isActive(pathname, link.href) ? "page" : undefined}
+              className={`flex min-h-14 items-center border-b border-line font-display text-[1.45rem] ${
+                isActive(pathname, link.href) ? "text-brand" : "text-ink"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <a
+            href={whatsappUrl(defaultWhatsappMessage)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-wa btn-lg mt-8 w-full"
+          >
+            <WhatsAppIcon className="size-5" />
+            Escríbenos por WhatsApp
+          </a>
         </nav>
       </div>
     </header>

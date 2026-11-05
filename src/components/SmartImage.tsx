@@ -10,13 +10,15 @@ type SmartImageProps = {
   className?: string;
   priority?: boolean;
   quality?: number;
+  /** Skeleton color for dark sections. */
+  tone?: "day" | "night";
 };
 
 /**
  * next/image in "fill" mode with a shimmer skeleton until the photo arrives,
  * then a short fade-in. The parent must be positioned (relative/absolute).
  */
-export function SmartImage({ src, alt, sizes, className = "", priority = false, quality = 60 }: SmartImageProps) {
+export function SmartImage({ src, alt, sizes, className = "", priority = false, quality = 60, tone = "day" }: SmartImageProps) {
   const ref = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -29,7 +31,7 @@ export function SmartImage({ src, alt, sizes, className = "", priority = false, 
     <>
       <span
         aria-hidden="true"
-        className={`skeleton absolute inset-0 transition-opacity duration-500 ${loaded ? "opacity-0" : "opacity-100"}`}
+        className={`${tone === "night" ? "skeleton-night" : "skeleton"} absolute inset-0 transition-opacity duration-500 ${loaded ? "opacity-0" : "opacity-100"}`}
       />
       <Image
         ref={ref}

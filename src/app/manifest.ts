@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Instalación, mantenimiento y reparación de aires acondicionados en el Quindío.",
     start_url: "/",
     display: "standalone",
-    background_color: "#050e1a",
-    theme_color: "#050e1a",
+    background_color: "#f5f9fc",
+    theme_color: "#f5f9fc",
     lang: "es-CO",
     icons: [
       { src: "/icon.png", sizes: "192x192", type: "image/png", purpose: "any" },

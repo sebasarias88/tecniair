@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArticleText, IncludesAndBenefits, ProcessStrip, RelatedCards } from "@/components/detail/DetailSections";
-import { PageHero } from "@/components/detail/PageHero";
+import { Suspense } from "react";
+import { ArticleText, IncludesAndBenefits, RelatedCards } from "@/components/detail/DetailSections";
+import { PageHero, PageHeroSkeleton } from "@/components/detail/PageHero";
 import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
+import { CtaBand, Steps } from "@/components/ui";
 import { getService, sectors, services } from "@/lib/content";
 import { breadcrumbJsonLd, faqJsonLd, serviceJsonLd } from "@/lib/seo";
 
@@ -26,7 +28,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ServicePage({ params }: Props) {
+// The URL-dependent part sits inside Suspense so the page shell stays instant
+// on client navigation (partialPrefetching). Known slugs are still prerendered whole.
+export default function ServicePage({ params }: Props) {
+  return (
+    <main>
+      <Suspense fallback={<PageHeroSkeleton />}>
+        <ServiceContent params={params} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function ServiceContent({ params }: Props) {
   const { slug } = await params;
   const service = getService(slug);
   if (!service) notFound();
@@ -59,11 +73,11 @@ export default async function ServicePage({ params }: Props) {
         };
 
   return (
-    <main>
+    <>
       <PageHero
         crumbs={[
           { name: "Inicio", href: "/" },
-          { name: "Servicios", href: "/#servicios" },
+          { name: "Servicios", href: "/servicios" },
           { name: service.shortName, href: path },
         ]}
         title={`${service.name} en Armenia y el Quindío`}
@@ -75,20 +89,22 @@ export default async function ServicePage({ params }: Props) {
         message={service.message}
       />
       <IncludesAndBenefits heading="Qué incluye" items={service.includes} benefits={service.benefits} />
+      <Steps />
       <ArticleText heading={`Servicio de ${service.shortName.toLowerCase()} en Armenia`} paragraphs={service.details} />
-      <ProcessStrip />
+      <Faq items={service.faqs} title={`Preguntas sobre ${service.shortName.toLowerCase()}`} showAllLink />
       <RelatedCards {...related} />
-      <Faq items={service.faqs} title={["Preguntas sobre", service.shortName.toLowerCase()]} />
+      <CtaBand title={`¿Necesitas ${service.shortName.toLowerCase()}?`} message={service.message} />
       <JsonLd
         data={[
           serviceJsonLd(service),
           faqJsonLd(service.faqs),
           breadcrumbJsonLd([
             { name: "Inicio", path: "/" },
+            { name: "Servicios", path: "/servicios" },
             { name: service.name, path },
           ]),
         ]}
       />
-    </main>
+    </>
   );
 }

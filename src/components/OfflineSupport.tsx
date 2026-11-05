@@ -43,7 +43,7 @@ export function OfflineSupport() {
   return (
     <div
       role="status"
-      className="fixed inset-x-0 top-0 z-[90] bg-heat px-4 py-2.5 text-center text-[0.95rem] font-semibold text-abyss"
+      className="fixed inset-x-0 top-0 z-[90] bg-ink px-4 py-2.5 text-center text-[0.95rem] font-semibold text-white"
     >
       Sin conexión. Revisa tu internet; cuando vuelva, puedes escribirnos por WhatsApp.
     </div>
