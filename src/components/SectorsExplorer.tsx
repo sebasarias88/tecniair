@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { SmartImage } from "@/components/SmartImage";
 import Link from "next/link";
 import { useState } from "react";
 import { RevealHeading } from "@/components/motion/RevealHeading";
@@ -63,14 +64,15 @@ export function SectorsExplorer() {
 
           <div className="lg:col-span-6">
             <div className="sticky top-28 overflow-hidden rounded-[2rem] ring-1 ring-white/10">
-              <div className="relative aspect-[4/5]">
+              <div className="skeleton relative aspect-[4/5]">
                 {sectors.map((sector, i) => (
                   <Image
                     key={sector.slug}
                     src={sector.image}
-                    alt=""
+                    alt={active === i ? sector.imageAlt : ""}
                     fill
                     sizes="45vw"
+                    quality={60}
                     loading="lazy"
                     className={`object-cover transition-all duration-700 ease-[var(--ease-out-expo)] ${
                       active === i ? "scale-100 opacity-100" : "scale-105 opacity-0"
@@ -95,7 +97,7 @@ export function SectorsExplorer() {
                 href={`/sectores/${sector.slug}`}
                 className="relative block aspect-[4/5] overflow-hidden rounded-[1.75rem] ring-1 ring-white/10"
               >
-                <Image src={sector.image} alt="" fill sizes="80vw" className="object-cover" />
+                <SmartImage src={sector.image} alt={sector.imageAlt} sizes="80vw" />
                 <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-abyss via-abyss/20 to-transparent" />
                 <span className="absolute inset-x-0 bottom-0 p-5">
                   <span className="block text-[1.7rem] font-bold leading-none tracking-[-0.03em] [font-stretch:118%]">

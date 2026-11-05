@@ -32,15 +32,6 @@ html {
   background: var(--color-abyss);
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
 body {
   background: var(--color-abyss);
   color: var(--color-frost);
@@ -49,17 +40,6 @@ body {
   line-height: 1.55;
   padding-bottom: var(--dock-h);
   overflow-x: clip;
-}
-
-/* Film grain gives the dark surfaces depth instead of flat fills */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.06;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 /* Width axis is the personality of the type system */
@@ -100,11 +80,92 @@ body::after {
   display: block;
 }
 
+/* Solid tinted surface. No backdrop-filter: blurring what is behind is
+   recalculated on every scroll frame and was a main cause of jank. */
 .glass {
-  background: linear-gradient(160deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.03));
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.09), rgb(255 255 255 / 0.03)), rgb(11 31 54 / 0.72);
   border: 1px solid rgb(255 255 255 / 0.12);
+}
+
+/* Light "frost" sections that break up the dark page */
+.section-light {
+  background: var(--color-frost);
+  color: var(--color-abyss);
+  color-scheme: light;
+}
+
+.section-light :focus-visible {
+  outline-color: var(--color-electric);
+}
+
+/* Reveal on scroll, driven by RevealObserver (CSS only, no animation library).
+   Content is only hidden when JS is running, so it is never lost without it. */
+html.js [data-reveal="lines"] .line-mask > span {
+  transform: translateY(108%);
+  transition: transform 0.9s var(--ease-out-expo);
+}
+html.js [data-reveal="lines"] .line-mask:nth-child(2) > span { transition-delay: 0.08s; }
+html.js [data-reveal="lines"] .line-mask:nth-child(3) > span { transition-delay: 0.16s; }
+html.js [data-reveal="lines"][data-revealed] .line-mask > span {
+  transform: none;
+}
+html.js [data-reveal="fade"] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+html.js [data-reveal="fade"][data-revealed] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Loading placeholders */
+.skeleton {
+  background:
+    linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.07) 40%, transparent 60%) 0 0 / 220% 100%,
+    linear-gradient(160deg, #12304f, #0b1f36);
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: -220% 0, 0 0; }
+}
+
+/* Buttons that open WhatsApp or a call show a spinner while the app opens
+   (LinkLoading sets data-loading on click). */
+a[data-loading] {
+  pointer-events: none;
+  cursor: progress;
+}
+a[data-loading] > svg:first-child {
+  visibility: hidden;
+}
+a[data-loading]::before {
+  content: "";
+  position: absolute;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: spin 0.7s linear infinite;
+}
+a[data-loading]:not([class*="absolute"]):not([class*="fixed"]) {
+  position: relative;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes enter-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes enter-scale {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
 }
 
 .glow-ring {
@@ -209,6 +270,11 @@ input[type="range"].range::-moz-range-thumb {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] .line-mask > span,
+  html.js [data-reveal="fade"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
   *,
   *::before,
   *::after {

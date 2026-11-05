@@ -1,150 +1,59 @@
-"use client";
-
-import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
 import { WhatsAppIcon } from "@/components/icons";
 import { RevealHeading } from "@/components/motion/RevealHeading";
+import { SmartImage } from "@/components/SmartImage";
 import { whatsappUrl } from "@/lib/business";
-import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { services } from "@/lib/content";
 
 const featured = services.filter((s) => s.featured);
 
+/** The four main services as a plain grid: no pinning, no horizontal scroll. */
 export function ServicesShowcase() {
-  const ref = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      if (prefersReducedMotion()) return;
-      const mm = gsap.matchMedia();
-
-      mm.add("(min-width: 1024px)", () => {
-        const track = trackRef.current;
-        if (!track) return;
-        const distance = () => track.scrollWidth - window.innerWidth;
-
-        const tween = gsap.to(track, {
-          x: () => -distance(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: ref.current,
-            start: "top top",
-            end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 0.8,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        gsap.to(".services-progress", {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ref.current,
-            start: "top top",
-            end: () => `+=${distance()}`,
-            scrub: true,
-          },
-        });
-
-        gsap.utils.toArray<HTMLElement>(".service-image").forEach((img) => {
-          gsap.fromTo(
-            img,
-            { xPercent: -8 },
-            {
-              xPercent: 8,
-              ease: "none",
-              scrollTrigger: {
-                trigger: img.parentElement,
-                containerAnimation: tween,
-                start: "left right",
-                end: "right left",
-                scrub: true,
-              },
-            },
-          );
-        });
-      });
-
-      mm.add("(max-width: 1023px)", () => {
-        gsap.utils.toArray<HTMLElement>(".service-panel").forEach((panel) => {
-          gsap.from(panel, {
-            y: 60,
-            autoAlpha: 0,
-            duration: 1,
-            ease: "expo.out",
-            scrollTrigger: { trigger: panel, start: "top 88%" },
-          });
-        });
-      });
-
-      return () => mm.revert();
-    },
-    { scope: ref },
-  );
-
   return (
-    <section
-      ref={ref}
-      id="servicios"
-      className="relative overflow-hidden bg-abyss py-24 lg:flex lg:h-svh lg:items-center lg:pb-6 lg:pt-[6.75rem]"
-    >
-      <div
-        ref={trackRef}
-        className="flex flex-col gap-6 px-4 sm:px-8 lg:flex-row lg:items-stretch lg:gap-8 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:pr-[8vw]"
-      >
-        <div className="flex shrink-0 flex-col justify-center lg:w-[34vw] lg:pr-8">
+    <section id="servicios" aria-labelledby="services-title" className="bg-abyss py-24 sm:py-32">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        <div className="grid gap-6 lg:grid-cols-12">
           <RevealHeading
-            lines={["Todo lo que", "tu aire", "necesita."]}
-            as="h2"
-            className="type-display text-[clamp(2.8rem,4.4vw,4.6rem)]"
+            id="services-title"
+            lines={["Todo lo que", "tu aire necesita."]}
+            className="type-display text-[clamp(2.6rem,5.2vw,4.8rem)] lg:col-span-7"
           />
-          <p className="mt-6 max-w-[38ch] text-white/65">
-            Casas, apartamentos, oficinas y locales comerciales. Un mismo equipo técnico para
-            instalar, mantener y reparar.
+          <p className="max-w-[46ch] text-white/70 lg:col-span-5 lg:self-end">
+            Servicio técnico de aire acondicionado en Armenia para casas, apartamentos, oficinas y
+            locales. Un mismo equipo para instalar, mantener y reparar.
           </p>
-          <div className="mt-10 hidden h-px w-full max-w-xs bg-white/10 lg:block" aria-hidden="true">
-            <div className="services-progress h-full origin-left scale-x-0 bg-glacier" />
-          </div>
         </div>
 
-        {featured.map((service) => (
-          <article
-            key={service.slug}
-            className="service-panel relative flex min-h-[32rem] shrink-0 overflow-hidden rounded-[2rem] ring-1 ring-white/10 lg:h-[min(46rem,calc(100svh-8.5rem))] lg:min-h-0 lg:w-[min(62vw,940px)]"
-          >
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="service-image absolute inset-y-0 -left-[10%] w-[120%]">
-                <Image
-                  src={service.image}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1024px) 70vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(0deg, rgb(5 14 26 / 0.98) 0%, rgb(5 14 26 / 0.85) 45%, rgb(5 14 26 / 0.15) 80%), linear-gradient(90deg, rgb(5 14 26 / 0.5), transparent 60%)",
-              }}
-            />
-            <div className="relative mt-auto w-full p-6 sm:p-9 lg:p-10">
-              <h3 className="type-display text-[clamp(1.8rem,8.4vw,2.8rem)] lg:text-[clamp(2.2rem,3.6vw,3.8rem)]">{service.shortName}</h3>
-              <div className="mt-5 grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-10">
-                <div>
-                  <p className="max-w-[42ch] text-white/80">{service.intro}</p>
-                  <div className="mt-6 flex flex-wrap items-center gap-2">
+        <ul className="mt-14 grid gap-5 md:grid-cols-2">
+          {featured.map((service) => (
+            <li key={service.slug} data-reveal="fade">
+              <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-navy ring-1 ring-white/10">
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <SmartImage
+                    src={service.image}
+                    alt={service.imageAlt}
+                    sizes="(min-width: 768px) 45vw, 100vw"
+                    className="transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
+                  />
+                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy via-navy/10 to-transparent" />
+                </div>
+                <div className="flex flex-1 flex-col p-6 sm:p-8">
+                  <h3 className="type-display text-[clamp(1.9rem,3vw,2.6rem)]">{service.shortName}</h3>
+                  <p className="mt-3 text-white/75">{service.intro}</p>
+                  <ul className="mt-5 space-y-2">
+                    {service.includes.slice(0, 3).map((item) => (
+                      <li key={item} className="flex items-baseline gap-3 text-[0.98rem] text-white/85">
+                        <span aria-hidden="true" className="h-px w-4 shrink-0 translate-y-[-0.3em] bg-glacier" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto flex flex-wrap items-center gap-2 pt-7">
                     <a
                       href={whatsappUrl(service.message)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-abyss transition-colors hover:bg-glacier"
+                      className="btn-ice inline-flex items-center gap-2.5 rounded-full px-6 py-3.5 font-semibold"
                     >
                       <WhatsAppIcon className="size-5" />
                       {service.cta}
@@ -158,18 +67,10 @@ export function ServicesShowcase() {
                     </Link>
                   </div>
                 </div>
-                <ul className="hidden space-y-2 border-l border-white/10 pl-8 xl:block">
-                  {service.includes.slice(0, 4).map((item) => (
-                    <li key={item} className="flex items-baseline gap-3 text-[0.98rem] text-white/85">
-                      <span aria-hidden="true" className="h-px w-4 shrink-0 translate-y-[-0.3em] bg-glacier" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </article>
-        ))}
+              </article>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

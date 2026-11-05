@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/SmartImage";
 import Link from "next/link";
 
 const steps = [
@@ -50,6 +50,22 @@ export function IncludesAndBenefits({
   );
 }
 
+/** Plain reading copy: what the service is, in words people search for. */
+export function ArticleText({ heading, paragraphs }: { heading: string; paragraphs: string[] }) {
+  return (
+    <section className="section-light py-20 sm:py-24">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-8 lg:grid-cols-12">
+        <h2 className="type-display text-[clamp(2rem,3.6vw,3.2rem)] text-abyss lg:col-span-5">{heading}</h2>
+        <div className="space-y-5 text-[1.08rem] leading-relaxed text-navy/85 lg:col-span-6 lg:col-start-7">
+          {paragraphs.map((p) => (
+            <p key={p.slice(0, 24)}>{p}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function ProcessStrip() {
   return (
     <section aria-labelledby="process-title" className="border-y border-white/10 bg-navy/40 py-16">
@@ -80,7 +96,7 @@ export function RelatedCards({
   items,
 }: {
   heading: string;
-  items: { href: string; name: string; text: string; image: string }[];
+  items: { href: string; name: string; text: string; image: string; imageAlt: string }[];
 }) {
   return (
     <section className="bg-abyss py-20 sm:py-28">
@@ -93,12 +109,11 @@ export function RelatedCards({
                 href={item.href}
                 className="group relative block aspect-[4/5] overflow-hidden rounded-[1.75rem] ring-1 ring-white/10"
               >
-                <Image
+                <SmartImage
                   src={item.image}
-                  alt=""
-                  fill
+                  alt={item.imageAlt}
                   sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="transition-transform duration-700 group-hover:scale-105"
                 />
                 <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-abyss via-abyss/30 to-transparent" />
                 <span className="absolute inset-x-0 bottom-0 p-6">

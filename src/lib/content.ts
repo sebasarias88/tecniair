@@ -17,7 +17,10 @@ export type Service = {
   cta: string;
   message: string;
   image: string;
-  /** Shown in the big horizontal gallery on the home page. */
+  imageAlt: string;
+  /** Longer copy for the service page (search engines and readers who want detail). */
+  details: string[];
+  /** Shown in the main services grid on the home page. */
   featured: boolean;
 };
 
@@ -33,6 +36,8 @@ export type Sector = {
   faqs: Faq[];
   message: string;
   image: string;
+  imageAlt: string;
+  details: string[];
 };
 
 export const services: Service[] = [
@@ -67,10 +72,13 @@ export const services: Service[] = [
         q: "¿Instalan equipos que yo ya compré?",
         a: "Sí. Instalamos equipos comprados por tu cuenta y revisamos que la capacidad sea la correcta para el espacio.",
       },
+      { q: "¿Qué necesito para instalar un aire acondicionado?", a: "Un punto eléctrico cerca y un lugar en la fachada o terraza para la unidad exterior. Si no lo tienes, en la visita te decimos qué hace falta y lo incluimos en el presupuesto." },
     ],
     cta: "Cotizar instalación",
     message: "Hola Tecniair, quiero cotizar la instalación de un aire acondicionado.",
     image: images.rooftopCrew,
+    imageAlt: "Técnicos instalando unidades de aire acondicionado en una terraza",
+    details: ["Somos un servicio técnico de instalación de aire acondicionado en Armenia, Quindío. Instalamos equipos mini split, piso techo y cassette en casas, apartamentos, oficinas, locales comerciales, hoteles y obras nuevas, con tubería de cobre, soportes firmes y un desagüe que no deja goteras.", "Antes de liberar el refrigerante hacemos vacío al sistema para sacar la humedad, que es lo que más daña un compresor. Al terminar probamos el equipo contigo, te explicamos cómo usarlo para gastar menos energía y dejamos la garantía por escrito."],
     featured: true,
   },
   {
@@ -104,10 +112,13 @@ export const services: Service[] = [
         q: "¿Ensucian la pared o el piso?",
         a: "No. Instalamos un protector que recoge el agua del lavado, así no se moja la pared ni el piso.",
       },
+      { q: "¿Cuánto dura un mantenimiento de aire acondicionado?", a: "Un mantenimiento preventivo de un mini split toma entre 1 y 2 horas por equipo, según qué tan sucio esté." },
     ],
     cta: "Programar mantenimiento",
     message: "Hola Tecniair, quiero programar un mantenimiento para mi aire acondicionado.",
     image: images.technicianHelmet,
+    imageAlt: "Técnico haciendo mantenimiento de aire acondicionado",
+    details: ["Hacemos mantenimiento preventivo y correctivo de aire acondicionado en Armenia y todo el Quindío. El mantenimiento preventivo es un lavado profundo de filtros, serpentines, turbina y bandeja; el correctivo resuelve fallas como goteos, malos olores o equipos que ya no enfrían.", "Con un mantenimiento cada 6 meses en casa, o cada 3 a 4 meses en negocios con uso diario, el aire enfría más rápido, consume menos energía y dura más años. Atendemos hogares, oficinas, locales, restaurantes, hoteles y casinos."],
     featured: true,
   },
   {
@@ -141,10 +152,13 @@ export const services: Service[] = [
         q: "¿Por qué mi aire gotea agua?",
         a: "Casi siempre es el desagüe tapado o los filtros sucios. En la mayoría de los casos se resuelve con un mantenimiento.",
       },
+      { q: "¿Vale la pena reparar un aire viejo?", a: "Depende de la falla y del costo. En la visita te decimos con honestidad si conviene repararlo o si sale mejor cambiarlo por un equipo nuevo." },
     ],
     cta: "Pedir diagnóstico",
     message: "Hola Tecniair, mi aire acondicionado tiene una falla y necesito un diagnóstico.",
     image: images.technicianPanel,
+    imageAlt: "Técnico revisando un tablero eléctrico de aire acondicionado",
+    details: ["Reparamos aires acondicionados en Armenia que no enfrían, gotean, hacen ruido, huelen mal o no prenden. Nuestro técnico revisa la parte eléctrica y la de refrigeración, encuentra la falla y te muestra qué está pasando.", "Hacemos detección y reparación de fugas, carga de refrigerante y cambio de capacitores, motores, sensores y tarjetas. Siempre te damos el precio antes de reparar y la reparación queda con garantía por escrito."],
     featured: true,
   },
   {
@@ -177,10 +191,13 @@ export const services: Service[] = [
         q: "¿Qué capacidad necesito?",
         a: "Depende del tamaño, el sol y las personas. Usa la calculadora de esta página y en la visita confirmamos el número exacto.",
       },
+      { q: "¿Cuántos BTU necesito para una habitación?", a: "Una habitación de 9 a 16 m² normalmente necesita un equipo de 9.000 a 12.000 BTU. Usa la calculadora de la página y en la visita lo confirmamos." },
     ],
     cta: "Cotizar un equipo",
     message: "Hola Tecniair, quiero cotizar un aire acondicionado con instalación.",
     image: images.splitDisplay,
+    imageAlt: "Aire acondicionado mini split instalado en la pared",
+    details: ["Vendemos aires acondicionados convencionales e inverter en Armenia con la instalación incluida. Antes de recomendarte un equipo calculamos los BTU que necesita tu espacio según el tamaño, el sol que recibe y las personas que lo usan.", "Así evitas comprar un equipo pequeño que trabaja forzado o uno grande que gasta de más. Te entregamos el aire instalado, funcionando y con garantía, y te explicamos cada cuánto hacerle mantenimiento."],
     featured: true,
   },
   {
@@ -218,12 +235,14 @@ export const services: Service[] = [
     cta: "Cotizar plan empresarial",
     message: "Hola Tecniair, quiero cotizar un plan de mantenimiento para los aires de mi empresa.",
     image: images.hotelLobby,
+    imageAlt: "Lobby de hotel climatizado",
+    details: ["Ofrecemos planes de mantenimiento de aire acondicionado para empresas en Armenia y el Quindío: hoteles, casinos, oficinas, clínicas, restaurantes y locales comerciales. Programamos las visitas según el uso de cada equipo y llevamos su hoja de vida.", "Con un plan pagas un valor fijo, evitas daños en plena temporada de calor y tienes prioridad cuando algo falla. Después de cada visita entregamos un informe de lo que se hizo en cada equipo."],
     featured: false,
   },
   {
     slug: "emergencias-aire-acondicionado-24-horas",
     name: "Emergencias 24 horas",
-    shortName: "Emergencias 24 h",
+    shortName: "Emergencias 24\u00a0h",
     metaTitle: "Técnico de aire acondicionado 24 horas en Armenia",
     metaDescription:
       "¿Se dañó el aire en plena noche o en un evento? Atención de emergencias 24 horas para aires acondicionados en Armenia y el Quindío. Escríbenos por WhatsApp.",
@@ -254,6 +273,8 @@ export const services: Service[] = [
     cta: "Reportar una emergencia",
     message: "Hola Tecniair, tengo una emergencia con un aire acondicionado y necesito un técnico lo antes posible.",
     image: images.condenserBrick,
+    imageAlt: "Unidad condensadora de aire acondicionado en una fachada",
+    details: ["Si tu aire acondicionado se daña de noche, un fin de semana o en plena temporada, atendemos emergencias las 24 horas en Armenia y municipios cercanos del Quindío. Escríbenos por WhatsApp o llámanos y coordinamos la visita del técnico.", "Las emergencias más comunes son equipos que se apagan, no enfrían o se congelan, sobre todo en hoteles, casinos y cuartos de servidores. Si falta un repuesto, dejamos una solución temporal mientras llega."],
     featured: false,
   },
   {
@@ -291,6 +312,8 @@ export const services: Service[] = [
     cta: "Cotizar sistema central",
     message: "Hola Tecniair, quiero información sobre sistemas centrales, ductos o limpieza de ductos.",
     image: images.flexibleDucts,
+    imageAlt: "Ductos de ventilación en el techo de un edificio",
+    details: ["Instalamos y mantenemos sistemas de aire acondicionado central y por ductos para espacios grandes en el Quindío: salones, pisos completos, hoteles, casinos, clínicas y locales.", "También hacemos limpieza de ductos para quitar polvo, moho y malos olores, y balanceo del flujo de aire para que la temperatura sea pareja en todo el espacio."],
     featured: false,
   },
   {
@@ -323,6 +346,8 @@ export const services: Service[] = [
     cta: "Cotizar traslado",
     message: "Hola Tecniair, necesito trasladar y reinstalar un aire acondicionado.",
     image: images.splitWallMono,
+    imageAlt: "Aire acondicionado mini split en una pared",
+    details: ["Si te mudas o remodelas, desmontamos tu aire acondicionado recuperando el refrigerante y lo reinstalamos en el nuevo lugar en Armenia o el Quindío.", "Sellamos las conexiones durante el traslado para que no entre humedad ni suciedad, y al reinstalar hacemos vacío y prueba de funcionamiento."],
     featured: false,
   },
   {
@@ -355,6 +380,8 @@ export const services: Service[] = [
     cta: "Cotizar preinstalación",
     message: "Hola Tecniair, quiero cotizar la preinstalación de aire acondicionado en una obra.",
     image: images.constructionInterior,
+    imageAlt: "Obra en construcción con andamios",
+    details: ["Hacemos preinstalación de aire acondicionado en obra nueva y remodelaciones en el Quindío: tubería de cobre empotrada, desagüe y punto eléctrico listos antes de pañetar y pintar.", "Trabajamos con constructoras, arquitectos y maestros de obra para que los equipos se instalen al final sin romper paredes ni dejar canaletas a la vista."],
     featured: false,
   },
   {
@@ -388,6 +415,8 @@ export const services: Service[] = [
     cta: "Consultar un repuesto",
     message: "Hola Tecniair, necesito un repuesto para mi aire acondicionado.",
     image: images.electronicsRepair,
+    imageAlt: "Técnico reparando una tarjeta electrónica",
+    details: ["Conseguimos e instalamos repuestos para aire acondicionado en Armenia: capacitores, contactores, motores de ventilador, tarjetas electrónicas, sensores y controles remotos.", "Verificamos la marca, el modelo y la referencia de tu equipo antes de pedir la pieza, y el técnico la instala y prueba el aire para que funcione bien."],
     featured: false,
   },
 ];
@@ -417,6 +446,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, necesito un servicio de aire acondicionado para mi casa.",
     image: images.homeInterior,
+    imageAlt: "Sala de una casa con aire acondicionado",
+    details: ["Instalamos, reparamos y hacemos mantenimiento de aire acondicionado para casas y apartamentos en Armenia y el Quindío. Recomendamos equipos silenciosos para habitaciones y te ayudamos a escoger la capacidad correcta para que tu factura de energía no se dispare."],
   },
   {
     slug: "oficinas",
@@ -442,6 +473,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, necesito un servicio de aire acondicionado para una oficina.",
     image: images.openOffice,
+    imageAlt: "Oficina abierta con escritorios y computadores",
+    details: ["Climatizamos oficinas en Armenia y el Quindío: puestos de trabajo, salas de reuniones y cuartos de servidores. Programamos el mantenimiento fuera del horario laboral para no interrumpir a tu equipo."],
   },
   {
     slug: "locales-comerciales",
@@ -467,6 +500,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, necesito un servicio de aire acondicionado para mi local comercial.",
     image: images.retailStore,
+    imageAlt: "Interior de un local comercial iluminado",
+    details: ["Aire acondicionado para tiendas, almacenes y locales comerciales en Armenia. Un local fresco hace que los clientes se queden más tiempo; nosotros nos encargamos de que el equipo funcione todo el año."],
   },
   {
     slug: "restaurantes",
@@ -492,6 +527,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, necesito un servicio de aire acondicionado para un restaurante.",
     image: images.restaurant,
+    imageAlt: "Salón de un restaurante con mesas",
+    details: ["Climatización para restaurantes, cafés y bares en el Quindío. Los salones cerca de la cocina necesitan más capacidad y limpieza frecuente por la grasa y el humo; diseñamos el mantenimiento para tu horario."],
   },
   {
     slug: "hoteles",
@@ -517,6 +554,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, quiero información sobre el servicio de aire acondicionado para un hotel.",
     image: images.hotelRoom,
+    imageAlt: "Habitación de hotel con cama doble",
+    details: ["Mantenimiento, reparación e instalación de aire acondicionado para hoteles en Armenia y el Quindío: habitaciones, lobbies y salones de eventos. Trabajamos en horarios de baja ocupación y atendemos emergencias las 24 horas."],
   },
   {
     slug: "casinos",
@@ -542,6 +581,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, quiero información sobre el servicio de aire acondicionado para un casino.",
     image: images.casino,
+    imageAlt: "Sala de casino con máquinas tragamonedas",
+    details: ["Aire acondicionado para casinos y salas de juego en el Quindío. Las máquinas y los horarios largos exigen equipos que trabajen sin descanso, por eso hacemos mantenimiento constante y atendemos fallas a cualquier hora."],
   },
   {
     slug: "clinicas-y-consultorios",
@@ -567,6 +608,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, necesito un servicio de aire acondicionado para una clínica o consultorio.",
     image: images.dentalClinic,
+    imageAlt: "Consultorio odontológico moderno",
+    details: ["Aire acondicionado para clínicas, consultorios médicos y odontológicos en Armenia. Mantenemos el aire limpio y fresco para pacientes y equipos, con limpieza de ductos e informes de cada mantenimiento."],
   },
   {
     slug: "obra-nueva-y-constructoras",
@@ -592,6 +635,8 @@ export const sectors: Sector[] = [
     ],
     message: "Hola Tecniair, quiero cotizar aire acondicionado para un proyecto de obra nueva.",
     image: images.constructionCrane,
+    imageAlt: "Edificio en construcción con grúa",
+    details: ["Preinstalación e instalación de aire acondicionado para constructoras y proyectos de vivienda en el Quindío. Dejamos la tubería lista durante la obra y entregamos los equipos funcionando."],
   },
 ];
 

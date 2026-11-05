@@ -11,15 +11,16 @@ type PageHeroProps = {
   headline: string;
   intro: string;
   image: string;
+  imageAlt: string;
   ctaLabel: string;
   message: string;
 };
 
-export function PageHero({ crumbs, title, headline, intro, image, ctaLabel, message }: PageHeroProps) {
+export function PageHero({ crumbs, title, headline, intro, image, imageAlt, ctaLabel, message }: PageHeroProps) {
   return (
     <section className="relative isolate flex min-h-svh flex-col justify-end overflow-hidden">
       <div className="absolute inset-0 -z-20">
-        <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
+        <Image src={image} alt={imageAlt} fill priority quality={65} sizes="100vw" className="object-cover" />
       </div>
       <div
         aria-hidden="true"
@@ -63,7 +64,7 @@ export function PageHero({ crumbs, title, headline, intro, image, ctaLabel, mess
           </a>
           <a
             href={`tel:${business.phoneE164}`}
-            className="inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/5 px-6 py-4 font-semibold backdrop-blur transition-colors hover:border-white/60"
+            className="inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/5 px-6 py-4 font-semibold transition-colors hover:border-white/60"
           >
             <PhoneIcon className="size-5" />
             Llamar al {business.phoneDisplay}

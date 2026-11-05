@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { RevealHeading } from "@/components/motion/RevealHeading";
 import { business } from "@/lib/business";
-import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 const plateRows = [
   { label: "Servicio", value: "Instalación, mantenimiento, reparación y venta" },
@@ -47,44 +46,26 @@ function Rivet({ className }: { className: string }) {
 export function HowWeWork() {
   const ref = useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      if (prefersReducedMotion()) {
-        gsap.set(".pipe-fill", { scaleY: 1 });
-        return;
-      }
+  const [active, setActive] = useState(0);
 
-      // Refrigerant flowing through the copper pipe as you read the steps
-      gsap.fromTo(
-        ".pipe-fill",
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: "none",
-          scrollTrigger: { trigger: ".steps-list", start: "top 65%", end: "bottom 60%", scrub: true },
-        },
-      );
-
-      gsap.utils.toArray<HTMLElement>(".step-item").forEach((item) => {
-        ScrollTrigger.create({
-          trigger: item,
-          start: "top 62%",
-          onEnter: () => item.classList.add("is-active"),
-          onLeaveBack: () => item.classList.remove("is-active"),
-        });
-      });
-
-      gsap.from(".spec-plate", {
-        rotateX: 18,
-        y: 80,
-        autoAlpha: 0,
-        duration: 1.4,
-        ease: "expo.out",
-        scrollTrigger: { trigger: ".spec-plate", start: "top 85%" },
-      });
-    },
-    { scope: ref },
-  );
+  // Each step lights up as it crosses the middle of the screen; the copper
+  // pipe fills up to the last active step with a plain CSS transition.
+  useEffect(() => {
+    const items = ref.current?.querySelectorAll<HTMLElement>(".step-item");
+    if (!items?.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const index = Number((entry.target as HTMLElement).dataset.index);
+          setActive((current) => Math.max(current, index + 1));
+        }
+      },
+      { rootMargin: "0px 0px -40% 0px" },
+    );
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section ref={ref} id="como-trabajamos" className="relative bg-abyss py-24 sm:py-32">
@@ -100,7 +81,8 @@ export function HowWeWork() {
 
           <div className="mt-12 [perspective:1200px]">
             <figure
-              className="spec-plate brushed-steel relative rounded-2xl p-6 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9),inset_0_1px_0_rgb(255_255_255/0.18)] ring-1 ring-white/10 sm:p-8"
+              data-reveal="fade"
+              className="brushed-steel relative rounded-2xl p-6 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9),inset_0_1px_0_rgb(255_255_255/0.18)] ring-1 ring-white/10 sm:p-8"
               aria-label="Ficha técnica de Tecniair"
             >
               <Rivet className="left-3 top-3" />
@@ -131,17 +113,22 @@ export function HowWeWork() {
 
         <div className="lg:col-span-6 lg:col-start-7 lg:pt-6">
           <h3 className="type-display text-[1.8rem]">Así funciona</h3>
-          <ol className="steps-list relative mt-10">
+          <ol className="relative mt-10">
             <span
               aria-hidden="true"
               className="absolute bottom-7 left-[1.45rem] top-7 w-1 rounded-full bg-[#3a2a1f]"
             />
             <span
               aria-hidden="true"
-              className="pipe-fill absolute bottom-7 left-[1.45rem] top-7 w-1 origin-top rounded-full bg-gradient-to-b from-copper via-[#e7a066] to-glacier shadow-[0_0_14px_rgb(199_123_63/0.8)]"
+              style={{ transform: `scaleY(${active / steps.length})` }}
+              className="absolute bottom-7 left-[1.45rem] top-7 w-1 origin-top rounded-full transition-transform duration-700 ease-out bg-gradient-to-b from-copper via-[#e7a066] to-glacier shadow-[0_0_14px_rgb(199_123_63/0.8)]"
             />
             {steps.map((step, index) => (
-              <li key={step.title} className="step-item group relative flex gap-7 pb-14 last:pb-0">
+              <li
+                key={step.title}
+                data-index={index}
+                className={`step-item group relative flex gap-7 pb-14 last:pb-0 ${index < active ? "is-active" : ""}`}
+              >
                 <span className="type-condensed relative z-10 grid size-12 shrink-0 place-items-center rounded-full border-[3px] border-copper bg-abyss text-[1.2rem] font-semibold transition-colors duration-500 group-[.is-active]:bg-copper group-[.is-active]:text-abyss">
                   {index + 1}
                 </span>

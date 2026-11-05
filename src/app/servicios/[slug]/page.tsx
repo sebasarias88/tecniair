@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { IncludesAndBenefits, ProcessStrip, RelatedCards } from "@/components/detail/DetailSections";
+import { ArticleText, IncludesAndBenefits, ProcessStrip, RelatedCards } from "@/components/detail/DetailSections";
 import { PageHero } from "@/components/detail/PageHero";
 import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
@@ -44,6 +44,7 @@ export default async function ServicePage({ params }: Props) {
             name: s.name,
             text: s.headline,
             image: s.image,
+            imageAlt: s.imageAlt,
           })),
         }
       : {
@@ -53,6 +54,7 @@ export default async function ServicePage({ params }: Props) {
             name: s.shortName,
             text: s.headline,
             image: s.image,
+            imageAlt: s.imageAlt,
           })),
         };
 
@@ -68,10 +70,12 @@ export default async function ServicePage({ params }: Props) {
         headline={service.headline}
         intro={service.intro}
         image={service.image}
+        imageAlt={service.imageAlt}
         ctaLabel={service.cta}
         message={service.message}
       />
       <IncludesAndBenefits heading="Qué incluye" items={service.includes} benefits={service.benefits} />
+      <ArticleText heading={`Servicio de ${service.shortName.toLowerCase()} en Armenia`} paragraphs={service.details} />
       <ProcessStrip />
       <RelatedCards {...related} />
       <Faq items={service.faqs} title={["Preguntas sobre", service.shortName.toLowerCase()]} />

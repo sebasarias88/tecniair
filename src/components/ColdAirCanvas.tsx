@@ -32,7 +32,8 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
     if (!canvas || !ctx) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // A 1x canvas is plenty for soft streaks and costs a quarter of the pixels on retina screens.
+    const dpr = 1;
     let width = 0;
     let height = 0;
     let particles: Particle[] = [];
@@ -62,7 +63,7 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.round(Math.min(width < 768 ? 35 : 110, (width * height) / 11000));
+      const count = Math.round(Math.min(width < 768 ? 22 : 80, (width * height) / 14000));
       particles = Array.from({ length: count }, () =>
         spawn({ life: Math.random() * 300, x: Math.random() * width, y: Math.random() * height }),
       );
@@ -74,6 +75,7 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
       const intensity = Math.max(0.15, Math.min(1, intensityRef.current ?? 0.6));
       ctx.clearRect(0, 0, width, height);
       ctx.lineCap = "round";
+      ctx.strokeStyle = "rgb(200, 245, 255)";
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -98,15 +100,8 @@ export function ColdAirCanvas({ intensityRef, className = "" }: ColdAirCanvasPro
         const tail = p.len * (0.5 + intensity);
         const angle = Math.atan2(p.vy, p.vx);
 
-        const grad = ctx.createLinearGradient(
-          p.x,
-          p.y,
-          p.x - Math.cos(angle) * tail,
-          p.y - Math.sin(angle) * tail,
-        );
-        grad.addColorStop(0, `rgba(200, 245, 255, ${alpha})`);
-        grad.addColorStop(1, "rgba(127, 227, 255, 0)");
-        ctx.strokeStyle = grad;
+        // Solid stroke with alpha: much cheaper than a gradient per streak per frame.
+        ctx.globalAlpha = alpha;
         ctx.lineWidth = p.width;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);

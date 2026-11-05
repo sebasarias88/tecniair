@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { IncludesAndBenefits, ProcessStrip, RelatedCards } from "@/components/detail/DetailSections";
+import { ArticleText, IncludesAndBenefits, ProcessStrip, RelatedCards } from "@/components/detail/DetailSections";
 import { PageHero } from "@/components/detail/PageHero";
 import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
@@ -46,10 +46,12 @@ export default async function SectorPage({ params }: Props) {
         headline={sector.headline}
         intro={sector.intro}
         image={sector.image}
+        imageAlt={sector.imageAlt}
         ctaLabel="Cotizar por WhatsApp"
         message={sector.message}
       />
       <IncludesAndBenefits heading={`Lo que necesita ${articleFor(sector.name)}`} items={sector.needs} />
+      <ArticleText heading={`Cómo cuidamos el aire de ${articleFor(sector.name)}`} paragraphs={sector.details} />
       <RelatedCards
         heading="Servicios recomendados"
         items={recommended.map((s) => ({
@@ -57,6 +59,7 @@ export default async function SectorPage({ params }: Props) {
           name: s.shortName,
           text: s.headline,
           image: s.image,
+          imageAlt: s.imageAlt,
         }))}
       />
       <ProcessStrip />

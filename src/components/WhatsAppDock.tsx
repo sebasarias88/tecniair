@@ -8,14 +8,7 @@ export function WhatsAppDock() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const services = document.getElementById("servicios");
-    const onScroll = () => {
-      const pastHero = window.scrollY > window.innerHeight * 0.7;
-      // Hide while the pinned services gallery fills the screen, so it never covers its buttons.
-      const rect = services?.getBoundingClientRect();
-      const insideServices = rect ? rect.top <= 1 && rect.bottom >= window.innerHeight - 1 : false;
-      setVisible(pastHero && !insideServices);
-    };
+    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.7);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -24,7 +17,7 @@ export function WhatsAppDock() {
   return (
     <>
       {/* Mobile: bottom bar once the hero buttons are behind */}
-      <div className={`glass fixed inset-x-0 bottom-0 z-50 rounded-t-3xl px-3 pb-[max(0.7rem,env(safe-area-inset-bottom))] pt-3 transition-transform duration-500 md:hidden ${
+      <div className={`fixed inset-x-0 bottom-0 border-t border-white/10 bg-[#081a2e] z-50 rounded-t-3xl px-3 pb-[max(0.7rem,env(safe-area-inset-bottom))] pt-3 transition-transform duration-500 md:hidden ${
           visible ? "translate-y-0" : "pointer-events-none translate-y-full"
         }`}>
         <div className="grid grid-cols-[1fr_auto] gap-2">

@@ -38,7 +38,7 @@ export function BusinessPlans() {
   return (
     <section id="empresas" aria-labelledby="plans-title" className="relative isolate overflow-hidden bg-abyss py-24 sm:py-32">
       <div className="absolute inset-0 -z-20 opacity-35">
-        <Image src={images.hotelLobby} alt="" fill sizes="100vw" className="object-cover" />
+        <Image src={images.hotelLobby} alt="" fill sizes="100vw" quality={50} loading="lazy" className="object-cover" />
       </div>
       <div
         aria-hidden="true"

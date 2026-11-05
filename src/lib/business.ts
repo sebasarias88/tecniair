@@ -33,6 +33,10 @@ export const business = {
     "Salento",
     "Filandia",
   ],
+  // Google Business Profile. Update the count from time to time.
+  googleRating: "5.0",
+  googleReviewCount: 28,
+  googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=TECNIAIR%20Armenia%20Quind%C3%ADo",
   instagram: "https://www.instagram.com/tecniair/",
   instagramHandle: "@tecniair",
   mapsQuery: "Barrio Los Andes, Armenia, Quindío, Colombia",

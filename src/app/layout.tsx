@@ -3,7 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@/components/Analytics";
 import { JsonLd } from "@/components/JsonLd";
-import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { LinkLoading } from "@/components/LinkLoading";
+import { RevealObserver } from "@/components/motion/RevealObserver";
 import { OfflineSupport } from "@/components/OfflineSupport";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -53,9 +54,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es-CO" className={`${archivo.variable} antialiased`}>
+    <html lang="es-CO" className={`${archivo.variable} antialiased`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="" />
+        {/* Marks that JS runs, so reveal animations may hide content until it enters the screen. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
       <body>
         <a
@@ -64,7 +67,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Saltar al contenido
         </a>
-        <SmoothScroll />
+        <RevealObserver />
+        <LinkLoading />
         <OfflineSupport />
         <SiteHeader />
         <div id="contenido">{children}</div>

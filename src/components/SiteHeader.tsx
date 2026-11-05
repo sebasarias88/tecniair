@@ -72,7 +72,7 @@ export function SiteHeader() {
     <header ref={headerRef} className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
       <div
         className={`pointer-events-auto relative mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500 sm:px-5 ${
-          scrolled || panel ? "glass shadow-[0_20px_50px_-20px_rgb(0_0_0/0.8)]" : "border border-transparent"
+          scrolled || panel ? "border border-white/10 bg-[#081a2e] shadow-[0_20px_50px_-20px_rgb(0_0_0/0.8)]" : "border border-transparent"
         }`}
       >
         <Link href="/" onClick={closeAll}>
@@ -142,7 +142,7 @@ export function SiteHeader() {
         {panel && (
           <div
             id="header-panel"
-            className="absolute inset-x-0 top-[calc(100%+0.75rem)] hidden rounded-[2rem] border border-white/12 bg-navy/95 p-4 backdrop-blur-xl shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9)] lg:block"
+            className="absolute inset-x-0 top-[calc(100%+0.75rem)] hidden rounded-[2rem] border border-white/12 bg-navy p-4 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9)] lg:block"
           >
             <ul className="grid grid-cols-2 gap-1 xl:grid-cols-3">
               {panelItems.map((item) => (
@@ -166,8 +166,7 @@ export function SiteHeader() {
       <div
         id="mobile-menu"
         hidden={!mobileOpen}
-        data-lenis-prevent
-        className="pointer-events-auto fixed inset-0 top-0 -z-10 overflow-y-auto bg-abyss/97 px-5 pb-32 pt-24 backdrop-blur-xl lg:hidden"
+        className="pointer-events-auto fixed inset-0 top-0 -z-10 overflow-y-auto bg-abyss px-5 pb-32 pt-24 lg:hidden"
       >
         <nav aria-label="Menú móvil" className="space-y-10">
           <div>

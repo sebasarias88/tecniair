@@ -1,6 +1,5 @@
 import { Logo } from "@/components/Logo";
 import { InstagramIcon, PhoneIcon, WhatsAppIcon } from "@/components/icons";
-import { Magnetic } from "@/components/motion/Magnetic";
 import { RevealHeading } from "@/components/motion/RevealHeading";
 import Link from "next/link";
 import { business, defaultWhatsappMessage, whatsappUrl } from "@/lib/business";
@@ -30,7 +29,6 @@ export function SiteFooter() {
             Escríbenos ahora y agendamos la visita. Respondemos por WhatsApp a cualquier hora.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Magnetic>
               <a
                 href={whatsappUrl(defaultWhatsappMessage)}
                 target="_blank"
@@ -40,7 +38,6 @@ export function SiteFooter() {
                 <WhatsAppIcon className="size-6" />
                 Escribir por WhatsApp
               </a>
-            </Magnetic>
             <a
               href={`tel:${business.phoneE164}`}
               className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/5 px-8 py-5 text-[1.05rem] font-semibold transition-colors hover:border-white/50"

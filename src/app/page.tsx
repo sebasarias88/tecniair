@@ -1,6 +1,7 @@
 import { BtuCalculator } from "@/components/BtuCalculator";
 import { BusinessPlans } from "@/components/BusinessPlans";
 import { Faq } from "@/components/Faq";
+import { GoogleReviews } from "@/components/GoogleReviews";
 import { Hero } from "@/components/Hero";
 import { HowWeWork } from "@/components/HowWeWork";
 import { JsonLd } from "@/components/JsonLd";
@@ -18,6 +19,7 @@ export default function HomePage() {
       <Hero />
       <ThermostatStory />
       <ServicesShowcase />
+      <GoogleReviews />
       <MoreServices />
       <SectorsExplorer />
       <BusinessPlans />
