@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@/components/Analytics";
 import { JsonLd } from "@/components/JsonLd";
-import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { LinkLoading } from "@/components/LinkLoading";
 import { OfflineSupport } from "@/components/OfflineSupport";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -11,13 +11,19 @@ import { WhatsAppDock } from "@/components/WhatsAppDock";
 import { business, SITE_URL } from "@/lib/business";
 import { localBusinessJsonLd, websiteJsonLd } from "@/lib/seo";
 
-// Archivo variable (weight + width axes), self-hosted and preloaded by next/font.
-const archivo = localFont({
-  src: "../fonts/archivo-variable.woff2",
-  weight: "100 900",
+// Self-hosted variable fonts (latin subset), preloaded by next/font.
+const bricolage = localFont({
+  src: "../fonts/bricolage-grotesque-variable.woff2",
+  weight: "200 800",
   display: "swap",
-  variable: "--font-archivo",
-  declarations: [{ prop: "font-stretch", value: "62% 125%" }],
+  variable: "--font-bricolage",
+});
+
+const figtree = localFont({
+  src: "../fonts/figtree-variable.woff2",
+  weight: "300 900",
+  display: "swap",
+  variable: "--font-figtree",
 });
 
 const defaultTitle = "Aire acondicionado en Armenia, Quindío | Tecniair";
@@ -47,27 +53,27 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050e1a",
-  colorScheme: "dark",
+  themeColor: "#f5f9fc",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es-CO" className={`${archivo.variable} antialiased`}>
+    <html lang="es-CO" className={`${bricolage.variable} ${figtree.variable} antialiased`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="" />
       </head>
       <body>
         <a
           href="#contenido"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-glacier focus:px-5 focus:py-3 focus:font-semibold focus:text-abyss"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-brand focus:px-5 focus:py-3 focus:font-semibold focus:text-white"
         >
           Saltar al contenido
         </a>
-        <SmoothScroll />
+        <LinkLoading />
         <OfflineSupport />
         <SiteHeader />
-        <div id="contenido">{children}</div>
+        <div id="contenido" className="pt-[4.5rem] sm:pt-20">{children}</div>
         <SiteFooter />
         <WhatsAppDock />
         <JsonLd data={[localBusinessJsonLd(), websiteJsonLd()]} />

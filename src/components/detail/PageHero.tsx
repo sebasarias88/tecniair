@@ -1,75 +1,59 @@
-import Image from "next/image";
-import Link from "next/link";
-import { PhoneIcon, WhatsAppIcon } from "@/components/icons";
-import { business, whatsappUrl } from "@/lib/business";
+import { SmartImage } from "@/components/SmartImage";
+import { Breadcrumbs, Container, WhatsAppButton } from "@/components/ui";
 
 type Crumb = { name: string; href: string };
 
 type PageHeroProps = {
   crumbs: Crumb[];
+  /** H1 with the search phrase ("Mantenimiento de aire acondicionado en Armenia"). */
   title: string;
   headline: string;
   intro: string;
   image: string;
+  imageAlt: string;
   ctaLabel: string;
   message: string;
 };
 
-export function PageHero({ crumbs, title, headline, intro, image, ctaLabel, message }: PageHeroProps) {
+/** Light split hero for service and sector pages: text and button left, photo right. */
+export function PageHero({ crumbs, title, headline, intro, image, imageAlt, ctaLabel, message }: PageHeroProps) {
   return (
-    <section className="relative isolate flex min-h-svh flex-col justify-end overflow-hidden">
-      <div className="absolute inset-0 -z-20">
-        <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
-      </div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(90deg, rgb(5 14 26 / 0.95) 0%, rgb(5 14 26 / 0.7) 55%, rgb(5 14 26 / 0.3) 100%), linear-gradient(0deg, #050e1a 0%, transparent 45%)",
-        }}
-      />
-      <div className="mx-auto w-full max-w-7xl px-4 pb-[clamp(1.5rem,6svh,4.5rem)] pt-28 sm:px-8">
-        <nav aria-label="Ruta de navegación">
-          <ol className="flex flex-wrap items-center gap-2 text-[0.92rem] text-white/70">
-            {crumbs.map((crumb, i) => (
-              <li key={crumb.href} className="flex items-center gap-2">
-                {i > 0 && <span aria-hidden="true">/</span>}
-                {i === crumbs.length - 1 ? (
-                  <span aria-current="page" className="text-white">
-                    {crumb.name}
-                  </span>
-                ) : (
-                  <Link href={crumb.href} className="hover:text-glacier">
-                    {crumb.name}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ol>
-        </nav>
-        <h1 className="mt-[clamp(0.75rem,2.5svh,1.5rem)] max-w-[40ch] text-[clamp(1.1rem,1.8vw,1.4rem)] font-semibold text-glacier">{title}</h1>
-        <p className="type-display mt-[clamp(0.5rem,1.5svh,1rem)] max-w-[17ch] text-[clamp(2.4rem,min(6.6vw,9.5svh),6rem)]">{headline}</p>
-        <p className="mt-[clamp(0.75rem,2.5svh,1.5rem)] max-w-[54ch] text-[clamp(1rem,1.3vw,1.2rem)] text-white/80">{intro}</p>
-        <div className="mt-[clamp(1rem,3.5svh,2.25rem)] flex flex-wrap gap-3">
-          <a
-            href={whatsappUrl(message)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-ice inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-[1.05rem] font-semibold"
-          >
-            <WhatsAppIcon className="size-5" />
+    <section className="bg-ice">
+      <Container className="grid items-center gap-8 pb-12 pt-8 sm:pt-12 lg:grid-cols-12 lg:gap-12 lg:pb-16">
+        <div className="lg:col-span-6">
+          <Breadcrumbs items={crumbs} />
+          <h1 className="mt-5 text-[1.05rem] font-bold text-brand sm:text-[1.12rem]">{title}</h1>
+          <p className="font-display mt-3 max-w-[16ch] text-[clamp(2.3rem,5.6vw,4rem)]">{headline}</p>
+          <p className="mt-4 max-w-[48ch] text-[1.1rem] text-ink-2">{intro}</p>
+          <WhatsAppButton message={message} className="mt-7">
             {ctaLabel}
-          </a>
-          <a
-            href={`tel:${business.phoneE164}`}
-            className="inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/5 px-6 py-4 font-semibold backdrop-blur transition-colors hover:border-white/60"
-          >
-            <PhoneIcon className="size-5" />
-            Llamar al {business.phoneDisplay}
-          </a>
+          </WhatsAppButton>
         </div>
-      </div>
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] lg:col-span-6">
+          <SmartImage src={image} alt={imageAlt} sizes="(min-width: 1024px) 45vw, 100vw" priority quality={75} />
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/** Same shape as the hero, shown while the page content streams in. */
+export function PageHeroSkeleton() {
+  return (
+    // Tall enough that the footer starts below the fold: swapping in the real
+    // content never moves anything the visitor can see.
+    <section className="min-h-[160svh] bg-ice" aria-busy="true" aria-label="Cargando">
+      <Container className="grid items-center gap-8 pb-12 pt-8 sm:pt-12 lg:grid-cols-12 lg:gap-12 lg:pb-16">
+        <div className="space-y-4 lg:col-span-6">
+          <div className="skeleton h-4 w-48 rounded-full" />
+          <div className="skeleton h-5 w-72 rounded-full" />
+          <div className="skeleton h-14 w-full max-w-md rounded-2xl" />
+          <div className="skeleton h-14 w-4/5 max-w-sm rounded-2xl" />
+          <div className="skeleton h-5 w-full max-w-lg rounded-full" />
+          <div className="skeleton h-14 w-64 rounded-full" />
+        </div>
+        <div className="skeleton aspect-[4/3] rounded-[2rem] lg:col-span-6" />
+      </Container>
     </section>
   );
 }

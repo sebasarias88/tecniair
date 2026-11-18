@@ -1,17 +1,17 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
+import { ChoiceChips } from "@/components/ChoiceChips";
 import { MinusIcon, PlusIcon, WhatsAppIcon } from "@/components/icons";
-import { RevealHeading } from "@/components/motion/RevealHeading";
 import { whatsappUrl } from "@/lib/business";
 
 type Sun = "shade" | "afternoon" | "direct";
 type Use = "bedroom" | "living" | "office" | "shop";
 
-const sunOptions: { id: Sun; label: string; factor: number; phrase: string }[] = [
-  { id: "shade", label: "Sombra", factor: 1, phrase: "en sombra" },
-  { id: "afternoon", label: "Sol de la tarde", factor: 1.1, phrase: "con sol de la tarde" },
-  { id: "direct", label: "Sol todo el día", factor: 1.2, phrase: "con sol todo el día" },
+const sunOptions: { id: Sun; label: string; factor: number; phrase: string; strength: number }[] = [
+  { id: "shade", label: "Sombra", factor: 1, phrase: "en sombra", strength: 0.15 },
+  { id: "afternoon", label: "Sol de la tarde", factor: 1.1, phrase: "con sol de la tarde", strength: 0.6 },
+  { id: "direct", label: "Sol todo el día", factor: 1.2, phrase: "con sol todo el día", strength: 1 },
 ];
 
 const useOptions: { id: Use; label: string; factor: number; phrase: string }[] = [
@@ -26,47 +26,81 @@ const BTU_PER_M2 = 500;
 const BTU_PER_EXTRA_PERSON = 600;
 const AREA_MIN = 6;
 const AREA_MAX = 120;
-
-const RING_RADIUS = 120;
-const RING_LENGTH = 2 * Math.PI * RING_RADIUS * 0.75; // 270° arc
+const PEOPLE_MAX = 30;
+const PEOPLE_DRAWN = 12;
 
 function formatBtu(value: number) {
   return value.toLocaleString("es-CO");
 }
 
-function Segmented<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: { id: T; label: string }[];
-  onChange: (id: T) => void;
-}) {
+/**
+ * Top-down sketch of the room: it grows with the area, the sun comes in
+ * through the window and each person is a dot. Plain SVG + CSS transitions.
+ */
+function RoomSketch({ area, people, sun, tier }: { area: number; people: number; sun: number; tier: number }) {
+  const k = 0.45 + 0.55 * ((area - AREA_MIN) / (AREA_MAX - AREA_MIN));
+  const halfW = 120 * k;
+  const halfH = 80 * k;
+  const drawn = Math.min(people, PEOPLE_DRAWN);
+  const cols = Math.min(drawn, 4);
+  const rows = Math.ceil(drawn / 4);
+  const flows = Math.min(3, 1 + Math.floor(tier / 2));
+  const t = "transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s";
+
   return (
-    <fieldset>
-      <legend className="mb-3 font-semibold">{label}</legend>
-      <div role="radiogroup" className="flex flex-wrap gap-2">
-        {options.map((o) => (
-          <button
-            key={o.id}
-            type="button"
-            role="radio"
-            aria-checked={value === o.id}
-            onClick={() => onChange(o.id)}
-            className={`rounded-full border px-4 py-2.5 text-[0.98rem] transition-all ${
-              value === o.id
-                ? "glow-ring border-glacier bg-glacier text-abyss"
-                : "border-white/15 bg-white/[0.04] text-white/85 hover:border-white/40"
-            }`}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </fieldset>
+    <svg viewBox="0 0 300 230" className="w-full" role="img" aria-label={`Espacio de ${area} metros cuadrados con ${people} ${people === 1 ? "persona" : "personas"}`}>
+      {/* Sun outside the window */}
+      <g style={{ transform: `translate(${150 + halfW + 26}px, 62px)`, opacity: 0.25 + 0.75 * sun, transition: t }}>
+        <circle r="11" fill="#d9480f" />
+        <g stroke="#d9480f" strokeWidth="2.4" strokeLinecap="round">
+          {Array.from({ length: 8 }, (_, i) => {
+            const a = (i * Math.PI) / 4;
+            return <line key={i} x1={Math.cos(a) * 16} y1={Math.sin(a) * 16} x2={Math.cos(a) * 21} y2={Math.sin(a) * 21} />;
+          })}
+        </g>
+      </g>
+
+      {/* Room */}
+      <g style={{ transform: `translate(150px, 112px) scale(${k})`, transition: t }}>
+        <polygon points="120,-40 120,20 40,60 40,-10" fill="#ffd8c2" style={{ opacity: 0.85 * sun, transition: "opacity 0.4s" }} />
+        <rect x="-120" y="-80" width="240" height="160" rx="8" fill="none" stroke="#0a1b2e" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+        <rect x="116" y="-40" width="8" height="60" rx="2" fill="#8fd3ff" />
+      </g>
+
+      {/* Air conditioner on the top wall, with its airflow */}
+      <g style={{ transform: `translate(150px, ${112 - halfH + 9}px)`, transition: t }}>
+        <rect x="-24" y="-6" width="48" height="12" rx="3" fill="#0f5bd8" />
+        <g fill="none" stroke="#0f5bd8" strokeWidth="2.2" strokeLinecap="round" className="[animation:pulse-air_2.4s_ease-in-out_infinite] motion-reduce:animate-none">
+          {Array.from({ length: flows }, (_, i) => (
+            <path key={i} d={`M${-18 - i * 6} ${16 + i * 9} Q0 ${26 + i * 11} ${18 + i * 6} ${16 + i * 9}`} opacity={1 - i * 0.25} />
+          ))}
+        </g>
+      </g>
+
+      {/* People */}
+      <g style={{ transform: `translate(150px, ${120 + 8 * k}px)`, transition: t }}>
+        {Array.from({ length: drawn }, (_, i) => {
+          const c = i % 4;
+          const r = Math.floor(i / 4);
+          const rowCount = r === rows - 1 ? drawn - r * 4 : cols;
+          const x = (c - (rowCount - 1) / 2) * 17;
+          const y = (r - (rows - 1) / 2) * 17;
+          return <circle key={i} cx={x} cy={y} r="6" fill="#0a1b2e" className="[animation:enter-up_0.3s_var(--ease-out-expo)_both]" />;
+        })}
+        {people > PEOPLE_DRAWN && (
+          <text x="0" y={rows * 9 + 14} textAnchor="middle" fontSize="11" fontWeight="700" fill="#3e5064">
+            +{people - PEOPLE_DRAWN}
+          </text>
+        )}
+      </g>
+
+      {/* Size label */}
+      <g style={{ transform: `translate(150px, ${112 + halfH + 20}px)`, transition: t }}>
+        <text textAnchor="middle" fontSize="14" fontWeight="700" fill="#3e5064">
+          {area} m²
+        </text>
+      </g>
+    </svg>
   );
 }
 
@@ -77,196 +111,125 @@ export function BtuCalculator() {
   const [use, setUse] = useState<Use>("bedroom");
   const areaId = useId();
 
+  const sunOption = sunOptions.find((s) => s.id === sun)!;
+  const useOption = useOptions.find((u) => u.id === use)!;
+
   const { recommended, raw, tierIndex } = useMemo(() => {
-    const sunFactor = sunOptions.find((s) => s.id === sun)!.factor;
-    const useFactor = useOptions.find((u) => u.id === use)!.factor;
-    const load =
-      area * BTU_PER_M2 * sunFactor * useFactor + Math.max(0, people - 2) * BTU_PER_EXTRA_PERSON;
+    const load = area * BTU_PER_M2 * sunOption.factor * useOption.factor + Math.max(0, people - 2) * BTU_PER_EXTRA_PERSON;
     const index = STANDARD_SIZES.findIndex((s) => s >= load);
     return {
       recommended: index >= 0 ? STANDARD_SIZES[index] : null,
       raw: Math.round(load),
       tierIndex: index >= 0 ? index : STANDARD_SIZES.length,
     };
-  }, [area, people, sun, use]);
+  }, [area, people, sunOption, useOption]);
 
-  const sunPhrase = sunOptions.find((s) => s.id === sun)!.phrase;
-  const usePhrase = useOptions.find((u) => u.id === use)!.phrase;
   const peopleLabel = `${people} ${people === 1 ? "persona" : "personas"}`;
   const message = recommended
-    ? `Hola Tecniair. Usé la calculadora de su página: ${usePhrase} de ${area} m², ${sunPhrase} y ${peopleLabel}. Me salió un equipo de ${formatBtu(recommended)} BTU. ¿Me pueden cotizar el equipo con instalación?`
-    : `Hola Tecniair. Necesito climatizar ${usePhrase} de ${area} m², ${sunPhrase} y ${peopleLabel}. ¿Me pueden hacer una visita para dimensionar el proyecto?`;
+    ? `Hola Tecniair. Usé la calculadora de su página: ${useOption.phrase} de ${area} m², ${sunOption.phrase} y ${peopleLabel}. Me salió un equipo de ${formatBtu(recommended)} BTU. ¿Me pueden cotizar el equipo con instalación?`
+    : `Hola Tecniair. Necesito climatizar ${useOption.phrase} de ${area} m², ${sunOption.phrase} y ${peopleLabel}. ¿Me pueden hacer una visita para dimensionar el proyecto?`;
 
   const fill = `${((area - AREA_MIN) / (AREA_MAX - AREA_MIN)) * 100}%`;
-  const ringProgress = Math.min(1, (tierIndex + 1) / STANDARD_SIZES.length);
 
   return (
-    <section id="calculadora" className="relative isolate overflow-hidden bg-navy py-24 sm:py-32">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(45% 50% at 75% 50%, rgb(127 227 255 / 0.16), transparent 70%), linear-gradient(180deg, #050e1a 0%, #0b1f36 20%, #0b1f36 80%, #050e1a 100%)",
-        }}
-      />
-      <div className="mx-auto max-w-7xl px-4 sm:px-8">
-        <div className="grid gap-6 lg:grid-cols-12">
-          <RevealHeading
-            lines={["¿Qué aire", "necesita tu espacio?"]}
-            className="type-display text-[clamp(2.6rem,5.6vw,5.2rem)] lg:col-span-8"
+    <div className="grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
+      <div className="card space-y-8 rounded-[1.75rem] p-6 sm:p-8 lg:col-span-6">
+        <div>
+          <div className="mb-1 flex items-baseline justify-between gap-4">
+            <label htmlFor={areaId} className="font-semibold">
+              Tamaño del espacio
+            </label>
+            <span className="font-display text-[1.6rem] text-brand tabular-nums">{area} m²</span>
+          </div>
+          <input
+            id={areaId}
+            type="range"
+            min={AREA_MIN}
+            max={AREA_MAX}
+            step={1}
+            value={area}
+            onChange={(e) => setArea(Number(e.target.value))}
+            className="range"
+            style={{ ["--fill" as string]: fill }}
           />
-          <p className="max-w-[44ch] text-white/65 lg:col-span-4 lg:self-end">
-            Un equipo pequeño trabaja forzado y uno grande gasta de más. Calcula la capacidad y
-            pide la cotización con el número exacto.
-          </p>
+          <p className="text-[0.92rem] text-ink-2">Largo por ancho. Un cuarto típico mide entre 9 y 16 m².</p>
         </div>
 
-        <div className="mt-14 grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
-          <div className="space-y-9 lg:col-span-6">
-            <div>
-              <div className="mb-1 flex items-baseline justify-between">
-                <label htmlFor={areaId} className="font-semibold">
-                  Tamaño del espacio
-                </label>
-                <span className="type-condensed text-[1.5rem] text-glacier">{area} m²</span>
-              </div>
-              <input
-                id={areaId}
-                type="range"
-                min={AREA_MIN}
-                max={AREA_MAX}
-                step={1}
-                value={area}
-                onChange={(e) => setArea(Number(e.target.value))}
-                className="range"
-                style={{ ["--fill" as string]: fill }}
-              />
-              <p className="text-[0.9rem] text-white/65">
-                Largo por ancho. Un cuarto típico mide entre 9 y 16 m².
-              </p>
-            </div>
+        <ChoiceChips label="¿Para qué es?" options={useOptions} value={use} onChange={setUse} />
+        <ChoiceChips label="¿Cuánto sol le entra?" options={sunOptions} value={sun} onChange={setSun} />
 
-            <Segmented label="¿Para qué es?" value={use} options={useOptions} onChange={setUse} />
-            <Segmented label="¿Cuánto sol le entra?" value={sun} options={sunOptions} onChange={setSun} />
-
-            <div>
-              <p className="mb-3 font-semibold" id="people-label">
-                Personas que suelen estar ahí
-              </p>
-              <div
-                className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/[0.04] p-1"
-                role="group"
-                aria-labelledby="people-label"
-              >
-                <button
-                  type="button"
-                  onClick={() => setPeople((p) => Math.max(1, p - 1))}
-                  aria-label="Quitar una persona"
-                  className="grid size-11 place-items-center rounded-full transition-colors hover:bg-white/10"
-                >
-                  <MinusIcon className="size-5" />
-                </button>
-                <span className="type-condensed w-10 text-center text-[1.4rem]" aria-live="polite">
-                  {people}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setPeople((p) => Math.min(30, p + 1))}
-                  aria-label="Agregar una persona"
-                  className="grid size-11 place-items-center rounded-full transition-colors hover:bg-white/10"
-                >
-                  <PlusIcon className="size-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-6">
-            <div className="glass relative overflow-hidden rounded-[2.25rem] p-7 sm:p-10">
-              <div className="relative mx-auto aspect-square w-full max-w-[22rem]">
-                <svg viewBox="0 0 300 300" className="absolute inset-0 size-full -rotate-[225deg]" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#1e6bff" />
-                      <stop offset="100%" stopColor="#7fe3ff" />
-                    </linearGradient>
-                  </defs>
-                  <circle
-                    cx="150"
-                    cy="150"
-                    r={RING_RADIUS}
-                    fill="none"
-                    stroke="rgb(255 255 255 / 0.08)"
-                    strokeWidth="14"
-                    strokeLinecap="round"
-                    strokeDasharray={`${RING_LENGTH} 1000`}
-                  />
-                  <circle
-                    cx="150"
-                    cy="150"
-                    r={RING_RADIUS}
-                    fill="none"
-                    stroke="url(#ring-grad)"
-                    strokeWidth="14"
-                    strokeLinecap="round"
-                    strokeDasharray={`${RING_LENGTH * ringProgress} 1000`}
-                    className="transition-[stroke-dasharray] duration-700 ease-[var(--ease-out-expo)] [filter:drop-shadow(0_0_10px_rgb(127_227_255/0.7))]"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center" aria-live="polite">
-                  <p className="text-[0.95rem] text-white/60">Te recomendamos</p>
-                  {recommended ? (
-                    <>
-                      <p className="type-numeral mt-2 text-[clamp(3.6rem,10vw,5.4rem)] text-glacier">
-                        {formatBtu(recommended)}
-                      </p>
-                      <p className="type-condensed mt-1 text-[1.3rem] text-white/80">BTU</p>
-                    </>
-                  ) : (
-                    <p className="type-display mt-3 max-w-[10ch] text-[2rem] text-glacier">
-                      Proyecto a la medida
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <ol className="mt-4 grid grid-cols-7 gap-1.5" aria-label="Capacidades comerciales">
-                {STANDARD_SIZES.map((size) => {
-                  const active = size === recommended;
-                  return (
-                    <li
-                      key={size}
-                      className={`type-condensed rounded-lg py-1.5 text-center text-[0.78rem] transition-colors sm:text-[0.85rem] ${
-                        active ? "bg-glacier text-abyss" : "text-white/60"
-                      }`}
-                    >
-                      {size / 1000}k
-                    </li>
-                  );
-                })}
-              </ol>
-
-              <p className="mt-6 text-center text-[0.9rem] text-white/65">
-                Carga estimada: {formatBtu(raw)} BTU/h. En la visita medimos y confirmamos la
-                capacidad antes de cotizar.
-              </p>
-
-              <a
-                href={whatsappUrl(message)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-ice mt-7 flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-center text-[1.05rem] font-semibold"
-              >
-                <WhatsAppIcon className="size-5 shrink-0" />
-                {recommended
-                  ? `Cotizar un equipo de ${formatBtu(recommended)} BTU`
-                  : "Pedir visita para dimensionar"}
-              </a>
-            </div>
+        <div>
+          <p className="mb-3 font-semibold" id="people-label">
+            Personas que suelen estar ahí
+          </p>
+          <div className="inline-flex items-center gap-1 rounded-full border border-line-2 bg-white p-1" role="group" aria-labelledby="people-label">
+            <button
+              type="button"
+              onClick={() => setPeople((p) => Math.max(1, p - 1))}
+              aria-label="Quitar una persona"
+              className="grid size-11 place-items-center rounded-full transition-colors hover:bg-ice"
+            >
+              <MinusIcon className="size-5" />
+            </button>
+            <span className="w-10 text-center text-[1.35rem] font-bold tabular-nums" aria-live="polite">
+              {people}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPeople((p) => Math.min(PEOPLE_MAX, p + 1))}
+              aria-label="Agregar una persona"
+              className="grid size-11 place-items-center rounded-full transition-colors hover:bg-ice"
+            >
+              <PlusIcon className="size-5" />
+            </button>
           </div>
         </div>
       </div>
-    </section>
+
+      <div className="lg:col-span-6">
+        <div className="card rounded-[1.75rem] p-6 sm:p-8 lg:sticky lg:top-28">
+          <div className="rounded-2xl bg-ice px-2 py-3">
+            <RoomSketch area={area} people={people} sun={sunOption.strength} tier={tierIndex} />
+          </div>
+
+          <div className="mt-6 text-center" aria-live="polite">
+            <p className="text-ink-2">Te recomendamos</p>
+            {recommended ? (
+              <p className="font-display mt-1 text-[clamp(3.2rem,9vw,4.6rem)] text-brand tabular-nums">
+                {formatBtu(recommended)} <span className="text-[0.4em] text-ink">BTU</span>
+              </p>
+            ) : (
+              <p className="font-display mt-2 text-[2rem] text-brand">Proyecto a la medida</p>
+            )}
+          </div>
+
+          <ol className="mt-5 grid grid-cols-7 gap-1.5" aria-label="Capacidades comerciales">
+            {STANDARD_SIZES.map((size) => {
+              const active = size === recommended;
+              return (
+                <li
+                  key={size}
+                  aria-current={active ? "true" : undefined}
+                  className={`rounded-lg py-1.5 text-center text-[0.8rem] font-semibold transition-colors duration-300 sm:text-[0.88rem] ${
+                    active ? "bg-brand text-white" : "bg-ice text-ink-2"
+                  }`}
+                >
+                  {size / 1000}k
+                </li>
+              );
+            })}
+          </ol>
+
+          <p className="mt-5 text-center text-[0.92rem] text-ink-2">
+            Carga estimada: {formatBtu(raw)} BTU/h. En la visita medimos y confirmamos antes de cotizar.
+          </p>
+
+          <a href={whatsappUrl(message)} target="_blank" rel="noopener noreferrer" className="btn btn-wa btn-lg mt-6 w-full">
+            <WhatsAppIcon className="size-5 shrink-0" />
+            {recommended ? `Cotizar un equipo de ${formatBtu(recommended)} BTU` : "Pedir visita para dimensionar"}
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { IncludesAndBenefits, ProcessStrip, RelatedCards } from "@/components/detail/DetailSections";
-import { PageHero } from "@/components/detail/PageHero";
+import { Suspense } from "react";
+import { ArticleText, IncludesAndBenefits, RelatedCards } from "@/components/detail/DetailSections";
+import { PageHero, PageHeroSkeleton } from "@/components/detail/PageHero";
 import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
+import { CtaBand, Steps } from "@/components/ui";
 import { getSector, getService, sectors, type Service } from "@/lib/content";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
 
@@ -26,30 +28,43 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function SectorPage({ params }: Props) {
+// See servicios/[slug]: URL data stays inside Suspense for instant navigation.
+export default function SectorPage({ params }: Props) {
+  return (
+    <main>
+      <Suspense fallback={<PageHeroSkeleton />}>
+        <SectorContent params={params} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function SectorContent({ params }: Props) {
   const { slug } = await params;
   const sector = getSector(slug);
   if (!sector) notFound();
 
   const path = `/sectores/${sector.slug}`;
   const recommended = sector.services.map(getService).filter((s): s is Service => Boolean(s));
+  const place = placeFor(sector.name);
 
   return (
-    <main>
+    <>
       <PageHero
         crumbs={[
           { name: "Inicio", href: "/" },
-          { name: "Sectores", href: "/#sectores" },
+          { name: "Empresas", href: "/empresas" },
           { name: sector.name, href: path },
         ]}
         title={sector.metaTitle}
         headline={sector.headline}
         intro={sector.intro}
         image={sector.image}
+        imageAlt={sector.imageAlt}
         ctaLabel="Cotizar por WhatsApp"
         message={sector.message}
       />
-      <IncludesAndBenefits heading={`Lo que necesita ${articleFor(sector.name)}`} items={sector.needs} />
+      <IncludesAndBenefits heading={`Lo que necesita ${place}`} items={sector.needs} />
       <RelatedCards
         heading="Servicios recomendados"
         items={recommended.map((s) => ({
@@ -57,24 +72,28 @@ export default async function SectorPage({ params }: Props) {
           name: s.shortName,
           text: s.headline,
           image: s.image,
+          imageAlt: s.imageAlt,
         }))}
       />
-      <ProcessStrip />
-      <Faq items={sector.faqs} title={["Preguntas", "frecuentes"]} />
+      <Steps />
+      <ArticleText heading={`Cómo cuidamos el aire de ${place}`} paragraphs={sector.details} />
+      <Faq items={sector.faqs} title="Preguntas frecuentes" showAllLink />
+      <CtaBand message={sector.message} />
       <JsonLd
         data={[
           faqJsonLd(sector.faqs),
           breadcrumbJsonLd([
             { name: "Inicio", path: "/" },
+            { name: "Empresas", path: "/empresas" },
             { name: sector.name, path },
           ]),
         ]}
       />
-    </main>
+    </>
   );
 }
 
-function articleFor(name: string) {
+function placeFor(name: string) {
   const map: Record<string, string> = {
     Hogares: "tu hogar",
     Oficinas: "tu oficina",

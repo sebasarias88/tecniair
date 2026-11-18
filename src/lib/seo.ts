@@ -13,7 +13,7 @@ export function localBusinessJsonLd() {
     description: business.description,
     url: SITE_URL,
     image: `${SITE_URL}/opengraph-image`,
-    logo: `${SITE_URL}/icon.png`,
+    logo: `${SITE_URL}/icon-512.png`,
     telephone: business.phoneE164,
     email: business.email,
     priceRange: "$$",

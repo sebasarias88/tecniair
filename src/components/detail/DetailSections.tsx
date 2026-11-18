@@ -1,12 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
-
-const steps = [
-  { title: "Nos escribes", text: "Por WhatsApp o llamada, a cualquier hora." },
-  { title: "Agendamos la visita", text: "El día y la hora que te sirvan." },
-  { title: "Diagnóstico y precio", text: "Te damos el valor antes de empezar." },
-  { title: "Trabajo con garantía", text: "Queda funcionando y con garantía por escrito." },
-];
+import { PhotoCard } from "@/components/cards";
+import { CheckIcon, Container } from "@/components/ui";
 
 export function IncludesAndBenefits({
   heading,
@@ -18,59 +11,52 @@ export function IncludesAndBenefits({
   benefits?: { title: string; text: string }[];
 }) {
   return (
-    <section className="bg-abyss py-20 sm:py-28">
-      <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-8 lg:grid-cols-12">
-        <div className="lg:col-span-5">
-          <h2 className="type-display text-[clamp(2.2rem,4vw,3.4rem)]">{heading}</h2>
-          <ul className="mt-9 space-y-4">
+    <section aria-labelledby="includes-title">
+      <Container className="grid gap-10 py-14 sm:py-20 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-6">
+          <h2 id="includes-title" className="font-display text-[clamp(1.8rem,3.4vw,2.6rem)]">
+            {heading}
+          </h2>
+          <ul className="mt-6 space-y-3">
             {items.map((item) => (
-              <li key={item} className="flex items-start gap-4 border-b border-white/10 pb-4">
-                <span aria-hidden="true" className="mt-1 grid size-6 shrink-0 place-items-center rounded-full bg-glacier text-abyss">
-                  <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m5 12 5 5 9-10" />
-                  </svg>
+              <li key={item} className="flex items-start gap-3">
+                <span aria-hidden="true" className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-brand text-white">
+                  <CheckIcon />
                 </span>
-                <span className="text-[1.08rem] text-white/90">{item}</span>
+                <span className="text-[1.05rem]">{item}</span>
               </li>
             ))}
           </ul>
         </div>
         {benefits && (
-          <div className="grid gap-4 lg:col-span-6 lg:col-start-7">
+          <ul className="grid gap-3 lg:col-span-6">
             {benefits.map((b) => (
-              <div key={b.title} className="glass rounded-[1.75rem] p-7">
-                <p className="text-[1.5rem] font-bold tracking-[-0.02em] [font-stretch:118%]">{b.title}</p>
-                <p className="mt-2 text-white/75">{b.text}</p>
-              </div>
+              <li key={b.title} className="card p-6" data-reveal>
+                <p className="font-display text-[1.3rem]">{b.title}</p>
+                <p className="mt-1.5 text-ink-2">{b.text}</p>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
-      </div>
+      </Container>
     </section>
   );
 }
 
-export function ProcessStrip() {
+/** Plain reading copy: what the service is, in the words people search for. */
+export function ArticleText({ heading, paragraphs }: { heading: string; paragraphs: string[] }) {
   return (
-    <section aria-labelledby="process-title" className="border-y border-white/10 bg-navy/40 py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-8">
-        <h2 id="process-title" className="text-[1.6rem] font-bold [font-stretch:115%]">
-          Así funciona
+    <section aria-labelledby="article-title" className="border-y border-line bg-white">
+      <Container className="max-w-4xl py-14 sm:py-16">
+        <h2 id="article-title" className="font-display text-[clamp(1.6rem,3vw,2.2rem)]">
+          {heading}
         </h2>
-        <ol className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map((step, i) => (
-            <li key={step.title} className="flex gap-4">
-              <span className="type-condensed grid size-11 shrink-0 place-items-center rounded-full border-[3px] border-copper text-[1.1rem] font-semibold">
-                {i + 1}
-              </span>
-              <div>
-                <p className="font-semibold">{step.title}</p>
-                <p className="mt-1 text-white/70">{step.text}</p>
-              </div>
-            </li>
+        <div className="mt-5 space-y-4 text-[1.05rem] leading-relaxed text-ink-2">
+          {paragraphs.map((p) => (
+            <p key={p.slice(0, 24)}>{p}</p>
           ))}
-        </ol>
-      </div>
+        </div>
+      </Container>
     </section>
   );
 }
@@ -80,38 +66,22 @@ export function RelatedCards({
   items,
 }: {
   heading: string;
-  items: { href: string; name: string; text: string; image: string }[];
+  items: { href: string; name: string; text: string; image: string; imageAlt: string }[];
 }) {
   return (
-    <section className="bg-abyss py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-4 sm:px-8">
-        <h2 className="type-display text-[clamp(2.2rem,4vw,3.4rem)]">{heading}</h2>
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <section aria-labelledby="related-title">
+      <Container className="py-14 sm:py-20">
+        <h2 id="related-title" className="font-display mb-7 text-[clamp(1.8rem,3.4vw,2.6rem)]">
+          {heading}
+        </h2>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item) => (
             <li key={item.href}>
-              <Link
-                href={item.href}
-                className="group relative block aspect-[4/5] overflow-hidden rounded-[1.75rem] ring-1 ring-white/10"
-              >
-                <Image
-                  src={item.image}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-abyss via-abyss/30 to-transparent" />
-                <span className="absolute inset-x-0 bottom-0 p-6">
-                  <span className="block text-[1.5rem] font-bold leading-tight tracking-[-0.02em] [font-stretch:118%]">
-                    {item.name}
-                  </span>
-                  <span className="mt-2 block text-[0.95rem] text-white/75">{item.text}</span>
-                </span>
-              </Link>
+              <PhotoCard href={item.href} title={item.name} text={item.text} image={item.image} imageAlt={item.imageAlt} />
             </li>
           ))}
         </ul>
-      </div>
+      </Container>
     </section>
   );
 }
